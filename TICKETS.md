@@ -437,6 +437,21 @@ public Action chooseAction(GameHistory history) {
 
 ---
 
+### TICKET-013b — Implement `AlwaysDefect` Participant
+**Priority:** High
+**Depends on:** TICKET-011
+
+The counterpart to `AlwaysCooperate`. Always returns `DEFECT` regardless of history.
+Useful as a baseline adversarial agent to stress-test other strategies.
+
+**Acceptance Criteria:**
+- [ ] Always returns `PrisonerAction.DEFECT`
+- [ ] Ignores `GameHistory` entirely
+- [ ] `reset()` is a no-op
+- [ ] Lives in `sits/games/ipd/`
+
+---
+
 ## Epic 5: Game Implementation — Iterated Prisoner's Dilemma
 
 ### TICKET-014 — Create `PrisonerAction` Enum
@@ -636,6 +651,7 @@ A GUI component that registers as a `GameObserver` and displays results in real 
 | 011    | `Participant` interface           | Critical | 003, 001      |
 | 012    | `AlwaysCooperate` participant     | High     | 011           |
 | 013    | `TitForTat` participant           | High     | 011           |
+| 013b   | `AlwaysDefect` participant        | High     | 011           |
 | 014    | `PrisonerAction` enum             | High     | 001           |
 | 015    | `IteratedPrisonersDilemma` game   | High     | 010, 014, 011 |
 | 016    | `TournamentFormat` interface      | High     | 011, 005      |
