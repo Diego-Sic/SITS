@@ -188,6 +188,7 @@ Stores the outcome of a single game round between two participants.
 ### TICKET-003 — Create `GameHistory` Class
 **Priority:** Critical
 **Depends on:** TICKET-002
+**Status:** Done — `src/main/java/sits/core/GameHistory.java`
 
 Accumulates all `RoundResult` objects for a single game instance.
 
@@ -200,10 +201,14 @@ Accumulates all `RoundResult` objects for a single game instance.
 - `getRounds()` — returns the full list
 - `getLastRound()` — returns the last `RoundResult` (used by TitForTat)
 
+**Design note:** `getLastRound()` returns `null` when the list is empty. Callers must
+check `getRounds().isEmpty()` first — consistent with how `TitForTat` uses it.
+
 **Acceptance Criteria:**
-- [ ] `getLastRound()` returns `null` or throws when list is empty (document the choice)
-- [ ] `getRounds()` returns a mutable list (rounds are added during play)
-- [ ] Constructor accepts both player names
+- [x] `getLastRound()` returns `null` when list is empty (documented above)
+- [x] `getRounds()` returns a mutable list (rounds are added during play)
+- [x] Constructor accepts both player names
+- [x] Tests in `sits/core/GameHistoryTest.java`
 
 ---
 
