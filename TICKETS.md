@@ -215,6 +215,7 @@ check `getRounds().isEmpty()` first — consistent with how `TitForTat` uses it.
 ### TICKET-004 — Create `GameResult` Class
 **Priority:** High
 **Depends on:** TICKET-003
+**Status:** Done — `src/main/java/sits/core/GameResult.java`
 
 Holds the final outcome of a completed game.
 
@@ -225,9 +226,10 @@ Holds the final outcome of a completed game.
 - `totalScoreP2 : int`
 
 **Acceptance Criteria:**
-- [ ] Constructed from a completed `GameHistory`
-- [ ] Winner determined by comparing total scores
-- [ ] Supports draw case
+- [x] Constructed from a completed `GameHistory`
+- [x] Winner determined by comparing total scores
+- [x] Supports draw case
+- [x] Tests in `sits/core/GameResultTest.java`
 
 ---
 
