@@ -543,6 +543,7 @@ public interface TournamentFormat {
 ### TICKET-017 — Implement `RoundRobin` Tournament Format
 **Priority:** High
 **Depends on:** TICKET-016, TICKET-010
+**Status:** Done — `src/main/java/sits/tournament/RoundRobin.java`
 
 Every unique pair of participants plays one match.
 
@@ -553,10 +554,11 @@ Every unique pair of participants plays one match.
 4. Return a `TournamentResult`
 
 **Acceptance Criteria:**
-- [ ] Each pair plays exactly once (no mirror matches e.g. A vs B and B vs A)
-- [ ] `reset()` is called on both participants before each match
-- [ ] Works for any number of participants ≥ 2
-- [ ] `TournamentResult` contains all `GameResult` objects
+- [x] Each pair plays exactly once (no mirror matches e.g. A vs B and B vs A)
+- [x] `reset()` is called on both participants before each match
+- [x] Works for any number of participants ≥ 2
+- [x] `TournamentResult` contains all `GameResult` objects
+- [x] Tests in `sits/tournament/RoundRobinTest.java`
 
 ---
 
@@ -565,21 +567,23 @@ Every unique pair of participants plays one match.
 ### TICKET-018 — Write End-to-End Integration Test / Runner
 **Priority:** Medium
 **Depends on:** All previous tickets
+**Status:** Done — `src/test/java/sits/integration/EndToEndTest.java`
 
 Verify the full workflow described in Section 6 of the spec.
 
 **Scenario:**
 1. Create `IteratedPrisonersDilemma(200)`
-2. Create participants: `AlwaysCooperate`, `TitForTat` (at least 3 total for round-robin)
+2. Create participants: `AlwaysCooperate`, `AlwaysDefect`, `TitForTat`
 3. Create `MoveLogger` and `ScoreLogger`, register via `addObserver()`
 4. Create `RoundRobin`, call `run(participants, game)`
 5. Inspect output log files
 
 **Acceptance Criteria:**
-- [ ] Log files are created with correct content
-- [ ] `MoveLogger` never imports `PrisonerAction`
-- [ ] `ScoreLogger` records correct winner for each match
-- [ ] No exceptions thrown for standard inputs
+- [x] Log files are created with correct content
+- [x] `MoveLogger` never references `PrisonerAction` in output
+- [x] `ScoreLogger` records correct winner for each match
+- [x] No exceptions thrown for standard inputs
+- [x] Summary scores are consistent with individual game results
 
 ---
 
