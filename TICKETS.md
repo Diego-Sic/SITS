@@ -298,17 +298,19 @@ public interface GameObserver {
 ### TICKET-008 — Implement `MoveLogger`
 **Priority:** Medium
 **Depends on:** TICKET-007
+**Status:** Done — `src/main/java/sits/logging/MoveLogger.java`
 
 Concrete observer that writes each round's move to a file.
 
 **Behavior:**
 - `onMoveMade(event)` — writes player names, actions, and round payoffs to a log file
-- `onGameOver(result)` — no-op (or writes separator)
+- `onGameOver(result)` — writes `---` separator between games
 
 **Acceptance Criteria:**
-- [ ] Uses `action.getLabel()` — no imports of concrete action enums
-- [ ] Writes to a configurable file path
-- [ ] Appends to file (supports multiple games per session)
+- [x] Uses `action.getLabel()` — no imports of concrete action enums
+- [x] Writes to a configurable file path
+- [x] Appends to file (supports multiple games per session)
+- [x] Tests in `sits/logging/MoveLoggerTest.java`
 
 ---
 
@@ -610,28 +612,28 @@ A GUI component that registers as a `GameObserver` and displays results in real 
 
 ## Summary Table
 
-| Ticket | Description                     | Priority | Depends On    |
-|--------|---------------------------------|----------|---------------|
-| 000    | Project setup & package structure | Critical | —           |
-| 001    | `Action` interface              | Critical | 000           |
-| 002    | `RoundResult` class             | Critical | 001           |
-| 003    | `GameHistory` class             | Critical | 002           |
-| 004    | `GameResult` class              | High     | 003           |
-| 005    | `TournamentResult` class        | High     | 004           |
-| 006    | `MoveEvent` class               | High     | 002, 003      |
-| 007    | `GameObserver` interface        | High     | 004, 006      |
-| 008    | `MoveLogger` implementation     | Medium   | 007           |
-| 009    | `ScoreLogger` implementation    | Medium   | 007           |
-| 010    | Abstract `Game` class           | Critical | 003, 004, 007 |
-| 011    | `Participant` interface         | Critical | 003, 001      |
-| 012    | `AlwaysCooperate` participant   | High     | 011           |
-| 013    | `TitForTat` participant         | High     | 011           |
-| 014    | `PrisonerAction` enum           | High     | 001           |
-| 015    | `IteratedPrisonersDilemma` game | High     | 010, 014, 011 |
-| 016    | `TournamentFormat` interface    | High     | 011, 005      |
-| 017    | `RoundRobin` tournament         | High     | 016, 010      |
-| 018    | End-to-end integration test     | Medium   | All           |
-| 019    | `notifyTournamentOver()`        | Low      | 007, 017      |
-| 020    | Rock-Paper-Scissors game        | Low      | 001, 010, 011 |
-| 021    | Double Elimination format       | Low      | 016           |
-| 022    | GUI Observer                    | Low      | 007           |
+| Ticket | Description                       | Priority | Depends On    |
+|--------|-----------------------------------|----------|---------------|
+| 000    | Project setup & package structure | Critical | —             |
+| 001    | `Action` interface                | Critical | 000           |
+| 002    | `RoundResult` class               | Critical | 001           |
+| 003    | `GameHistory` class               | Critical | 002           |
+| 004    | `GameResult` class                | High     | 003           |
+| 005    | `TournamentResult` class          | High     | 004           |
+| 006    | `MoveEvent` class                 | High     | 002, 003      |
+| 007    | `GameObserver` interface          | High     | 004, 006      |
+| 008    | `MoveLogger` implementation       | Medium   | 007           |
+| 009    | `ScoreLogger` implementation      | Medium   | 007           |
+| 010    | Abstract `Game` class             | Critical | 003, 004, 007 |
+| 011    | `Participant` interface           | Critical | 003, 001      |
+| 012    | `AlwaysCooperate` participant     | High     | 011           |
+| 013    | `TitForTat` participant           | High     | 011           |
+| 014    | `PrisonerAction` enum             | High     | 001           |
+| 015    | `IteratedPrisonersDilemma` game   | High     | 010, 014, 011 |
+| 016    | `TournamentFormat` interface      | High     | 011, 005      |
+| 017    | `RoundRobin` tournament           | High     | 016, 010      |
+| 018    | End-to-end integration test       | Medium   | All           |
+| 019    | `notifyTournamentOver()`          | Low      | 007, 017      |
+| 020    | Rock-Paper-Scissors game          | Low      | 001, 010, 011 |
+| 021    | Double Elimination format         | Low      | 016           |
+| 022    | GUI Observer                      | Low      | 007           |
