@@ -277,6 +277,7 @@ Event object fired after every round.
 ### TICKET-007 — Create `GameObserver` Interface
 **Priority:** High
 **Depends on:** TICKET-004, TICKET-006
+**Status:** Done — `src/main/java/sits/core/GameObserver.java`
 
 Observer interface for reacting to game events.
 
@@ -288,8 +289,9 @@ public interface GameObserver {
 ```
 
 **Acceptance Criteria:**
-- [ ] Two methods: `onMoveMade` and `onGameOver`
-- [ ] No coupling to any specific game type
+- [x] Two methods: `onMoveMade` and `onGameOver`
+- [x] No coupling to any specific game type
+- [x] Tests in `sits/core/GameObserverTest.java`
 
 ---
 
