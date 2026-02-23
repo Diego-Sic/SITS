@@ -446,15 +446,17 @@ public Action chooseAction(GameHistory history) {
 ### TICKET-013b — Implement `AlwaysDefect` Participant
 **Priority:** High
 **Depends on:** TICKET-011
+**Status:** Done — `src/main/java/sits/games/ipd/AlwaysDefect.java`
 
 The counterpart to `AlwaysCooperate`. Always returns `DEFECT` regardless of history.
 Useful as a baseline adversarial agent to stress-test other strategies.
 
 **Acceptance Criteria:**
-- [ ] Always returns `PrisonerAction.DEFECT`
-- [ ] Ignores `GameHistory` entirely
-- [ ] `reset()` is a no-op
-- [ ] Lives in `sits/games/ipd/`
+- [x] Always returns `PrisonerAction.DEFECT`
+- [x] Ignores `GameHistory` entirely
+- [x] `reset()` is a no-op
+- [x] Lives in `sits/games/ipd/`
+- [x] Tests in `sits/games/ipd/AlwaysDefectTest.java`
 
 ---
 
