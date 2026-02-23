@@ -317,6 +317,7 @@ Concrete observer that writes each round's move to a file.
 ### TICKET-009 — Implement `ScoreLogger`
 **Priority:** Medium
 **Depends on:** TICKET-007
+**Status:** Done — `src/main/java/sits/logging/ScoreLogger.java`
 
 Concrete observer that writes final game scores to a file.
 
@@ -325,9 +326,10 @@ Concrete observer that writes final game scores to a file.
 - `onGameOver(result)` — writes winner and total scores
 
 **Acceptance Criteria:**
-- [ ] Only writes when game ends
-- [ ] Output is human-readable
-- [ ] Writes to a configurable file path
+- [x] Only writes when game ends
+- [x] Output is human-readable
+- [x] Writes to a configurable file path
+- [x] Tests in `sits/logging/ScoreLoggerTest.java`
 
 ---
 
