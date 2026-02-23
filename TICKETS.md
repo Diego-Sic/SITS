@@ -236,6 +236,7 @@ Holds the final outcome of a completed game.
 ### TICKET-005 — Create `TournamentResult` Class
 **Priority:** High
 **Depends on:** TICKET-004
+**Status:** Done — `src/main/java/sits/core/TournamentResult.java`
 
 Aggregates all `GameResult` objects from a completed tournament.
 
@@ -243,12 +244,13 @@ Aggregates all `GameResult` objects from a completed tournament.
 - `results : List<GameResult>`
 
 **Methods:**
-- `getResults()` — full game result list
-- `getSummary()` — overall standings/scores (optional for MVP)
+- `getResults()` — returns an unmodifiable view of all game results
+- `getSummary()` — returns total accumulated score per player across all games
 
 **Acceptance Criteria:**
-- [ ] Stores all game results from a tournament run
-- [ ] Can be returned by `TournamentFormat.run()`
+- [x] Stores all game results from a tournament run
+- [x] Can be returned by `TournamentFormat.run()`
+- [x] Tests in `sits/core/TournamentResultTest.java`
 
 ---
 
