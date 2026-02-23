@@ -1,1 +1,20 @@
-/target/
+# Build output
+target/
+
+# Compiled classes
+*.class
+
+.idea/
+
+# IDE files
+*.iml
+.classpath
+.project
+.settings/
+
+# SITS log output (MoveLogger, ScoreLogger)
+logs/
+*.log
+
+# Claude
+.claude
