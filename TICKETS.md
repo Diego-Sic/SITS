@@ -166,6 +166,7 @@ public interface Action {
 ### TICKET-002 — Create `RoundResult` Class
 **Priority:** Critical
 **Depends on:** TICKET-001
+**Status:** Done — `src/main/java/sits/core/RoundResult.java`
 
 Stores the outcome of a single game round between two participants.
 
@@ -176,10 +177,11 @@ Stores the outcome of a single game round between two participants.
 - `payoffP2 : int`
 
 **Acceptance Criteria:**
-- [ ] Holds `Action` (interface type, not concrete enum) for both players
-- [ ] Holds payoff scores for both players
-- [ ] Getters for all fields
-- [ ] No game-specific types imported
+- [x] Holds `Action` (interface type, not concrete enum) for both players
+- [x] Holds payoff scores for both players
+- [x] Getters for all fields
+- [x] No game-specific types imported
+- [x] Tests in `sits/core/RoundResultTest.java`
 
 ---
 
