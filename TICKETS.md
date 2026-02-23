@@ -405,13 +405,17 @@ public interface Participant {
 ### TICKET-012 — Implement `AlwaysCooperate` Participant
 **Priority:** High
 **Depends on:** TICKET-011
+**Status:** Done — `src/main/java/sits/games/ipd/AlwaysCooperate.java`
+
+**Note:** `PrisonerAction` enum was created here as a prerequisite (`sits/games/ipd/PrisonerAction.java`). TICKET-014 is covered.
 
 Simplest possible strategy — always returns `PrisonerAction.COOPERATE`.
 
 **Acceptance Criteria:**
-- [ ] Ignores `GameHistory` entirely
-- [ ] `reset()` is a no-op
-- [ ] Name returns `"AlwaysCooperate"` (or configurable)
+- [x] Ignores `GameHistory` entirely
+- [x] `reset()` is a no-op
+- [x] Name returns `"AlwaysCooperate"`
+- [x] Tests in `sits/games/ipd/AlwaysCooperateTest.java`
 
 ---
 
@@ -457,6 +461,7 @@ Useful as a baseline adversarial agent to stress-test other strategies.
 ### TICKET-014 — Create `PrisonerAction` Enum
 **Priority:** High
 **Depends on:** TICKET-001
+**Status:** Done — created as prerequisite of TICKET-012 (`src/main/java/sits/games/ipd/PrisonerAction.java`)
 
 Game-specific action type for the Prisoner's Dilemma.
 
@@ -470,9 +475,9 @@ public enum PrisonerAction implements Action {
 ```
 
 **Acceptance Criteria:**
-- [ ] Implements `Action` interface
-- [ ] Lives in the game-specific package (not core)
-- [ ] Only two values: `COOPERATE`, `DEFECT`
+- [x] Implements `Action` interface
+- [x] Lives in the game-specific package (`sits/games/ipd/`)
+- [x] Only two values: `COOPERATE`, `DEFECT`
 
 ---
 
