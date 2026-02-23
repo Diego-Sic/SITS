@@ -338,6 +338,9 @@ Concrete observer that writes final game scores to a file.
 ### TICKET-010 — Create Abstract `Game` Class
 **Priority:** Critical
 **Depends on:** TICKET-003, TICKET-004, TICKET-007
+**Status:** Done — `src/main/java/sits/core/Game.java`
+
+**Note:** `Participant` interface was also created here as a prerequisite (`sits/core/Participant.java`). TICKET-011 will add its tests.
 
 The heart of the Template Method pattern. Defines a fixed game loop with abstract hooks.
 
@@ -364,13 +367,14 @@ public GameResult play(Participant p1, Participant p2) {
 **Observer management:**
 - `addObserver(GameObserver o)`
 - `removeObserver(GameObserver o)`
-- `notifyMoveMade(MoveEvent e)` — private/protected
-- `notifyGameOver(GameResult r)` — private/protected
+- `notifyMoveMade(MoveEvent e)` — protected
+- `notifyGameOver(GameResult r)` — protected
 
 **Acceptance Criteria:**
-- [ ] `play()` is `final` — cannot be overridden
-- [ ] Observer list is an aggregation (observers not destroyed with game)
-- [ ] Notification fires after each round is added to history
+- [x] `play()` is `final` — cannot be overridden
+- [x] Observer list is an aggregation (observers not destroyed with game)
+- [x] Notification fires after each round is added to history
+- [x] Tests in `sits/core/GameTest.java`
 
 ---
 
@@ -379,6 +383,7 @@ public GameResult play(Participant p1, Participant p2) {
 ### TICKET-011 — Create `Participant` Interface
 **Priority:** Critical
 **Depends on:** TICKET-003, TICKET-001
+**Status:** Done — `src/main/java/sits/core/Participant.java` (created as prerequisite of TICKET-010)
 
 Strategy interface for decision-making agents.
 
@@ -391,8 +396,9 @@ public interface Participant {
 ```
 
 **Acceptance Criteria:**
-- [ ] `chooseAction` receives full `GameHistory`, not just last move
-- [ ] `reset()` clears any internal state (makes participants reusable across matches)
+- [x] `chooseAction` receives full `GameHistory`, not just last move
+- [x] `reset()` clears any internal state (makes participants reusable across matches)
+- [x] Tests in `sits/core/ParticipantTest.java`
 
 ---
 
