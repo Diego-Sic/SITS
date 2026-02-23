@@ -1,6 +1,7 @@
 package sits.tournament;
 
 import sits.core.Game;
+import sits.core.GameObserver;
 import sits.core.GameResult;
 import sits.core.Participant;
 import sits.core.TournamentFormat;
@@ -10,6 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoundRobin implements TournamentFormat {
+
+    private final List<GameObserver> observers = new ArrayList<>();
+
+    public void addObserver(GameObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(GameObserver observer) {
+        observers.remove(observer);
+    }
 
     @Override
     public TournamentResult run(List<Participant> participants, Game game) {
@@ -25,6 +36,10 @@ public class RoundRobin implements TournamentFormat {
             }
         }
 
-        return new TournamentResult(results);
+        TournamentResult tournamentResult = new TournamentResult(results);
+        for (GameObserver observer : observers) {
+            observer.onTournamentOver(tournamentResult);
+        }
+        return tournamentResult;
     }
 }

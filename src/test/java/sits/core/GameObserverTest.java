@@ -15,12 +15,16 @@ class GameObserverTest {
     static class CapturingObserver implements GameObserver {
         List<MoveEvent> moveEvents = new ArrayList<>();
         List<GameResult> gameResults = new ArrayList<>();
+        List<TournamentResult> tournamentResults = new ArrayList<>();
 
         @Override
         public void onMoveMade(MoveEvent event) { moveEvents.add(event); }
 
         @Override
         public void onGameOver(GameResult result) { gameResults.add(result); }
+
+        @Override
+        public void onTournamentOver(TournamentResult result) { tournamentResults.add(result); }
     }
 
     @Test

@@ -590,18 +590,21 @@ Verify the full workflow described in Section 6 of the spec.
 ### TICKET-019 — Add `notifyTournamentOver()` to Observer Chain
 **Priority:** Low
 **Depends on:** TICKET-007, TICKET-017
+**Status:** Done
 
 Section 6 of the spec mentions `notifyTournamentOver()` firing after all pairs have played.
 
-**Changes needed:**
-- Add `onTournamentOver(TournamentResult result)` to `GameObserver`
-- `RoundRobin.run()` fires it after all matches complete
-- `MoveLogger` and `ScoreLogger` implement the method (no-op or final summary)
+**Changes made:**
+- `GameObserver` — added `onTournamentOver(TournamentResult result)`
+- `RoundRobin` — fires `onTournamentOver()` after all matches; has its own observer list via `addObserver()` / `removeObserver()`
+- `MoveLogger` — no-op implementation
+- `ScoreLogger` — no-op implementation
 
 **Acceptance Criteria:**
-- [ ] Observer interface updated with the new method
-- [ ] `RoundRobin` calls it exactly once, at the end
-- [ ] Existing observers compile without breaking
+- [x] Observer interface updated with the new method
+- [x] `RoundRobin` calls it exactly once, at the end
+- [x] Existing observers compile without breaking
+- [x] Tests in `sits/tournament/RoundRobinTournamentOverTest.java`
 
 ---
 

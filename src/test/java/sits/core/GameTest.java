@@ -58,6 +58,8 @@ class GameTest {
         }
 
         @Override public void onGameOver(GameResult result) { gameResults.add(result); }
+
+        @Override public void onTournamentOver(TournamentResult result) { /* not used in Game tests */ }
     }
 
     // --- Tests ---

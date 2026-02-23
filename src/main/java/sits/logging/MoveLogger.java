@@ -4,6 +4,7 @@ import sits.core.GameObserver;
 import sits.core.GameResult;
 import sits.core.MoveEvent;
 import sits.core.RoundResult;
+import sits.core.TournamentResult;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,6 +36,11 @@ public class MoveLogger implements GameObserver {
     @Override
     public void onGameOver(GameResult result) {
         writeLine("---");
+    }
+
+    @Override
+    public void onTournamentOver(TournamentResult result) {
+        // no-op — MoveLogger only tracks round-by-round moves
     }
 
     private void writeLine(String line) {

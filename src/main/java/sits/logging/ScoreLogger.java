@@ -3,6 +3,7 @@ package sits.logging;
 import sits.core.GameObserver;
 import sits.core.GameResult;
 import sits.core.MoveEvent;
+import sits.core.TournamentResult;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,8 +35,11 @@ public class ScoreLogger implements GameObserver {
         writeLine(line);
     }
 
-    // This function is about the same as in the MoveLogger, in the future it might be worth it create
-//    an utility folder to store
+    @Override
+    public void onTournamentOver(TournamentResult result) {
+        // no-op — ScoreLogger records per-game results, not tournament summaries
+    }
+
     private void writeLine(String line) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath, true))) {
             writer.println(line);
