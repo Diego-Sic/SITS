@@ -507,10 +507,13 @@ public IteratedPrisonersDilemma(int rounds);
 - `isOver(history)` — returns `true` when `history.getRounds().size() >= roundLimit`
 - `computeFinalResult(history)` — sums payoffs, determines winner
 
+**Status:** Done — `src/main/java/sits/games/ipd/IteratedPrisonersDilemma.java`
+
 **Acceptance Criteria:**
-- [ ] `getPayoff()` throws `IllegalArgumentException` on unrecognized action types (fail loudly)
-- [ ] `getPayoff()` is the **only** place `PrisonerAction` is referenced by name
-- [ ] Round count is configurable via constructor
+- [x] `getPayoff()` throws `IllegalArgumentException` on unrecognized action types (fail loudly)
+- [x] `getPayoff()` is the **only** place `PrisonerAction` is referenced by name
+- [x] Round count is configurable via constructor
+- [x] Tests in `sits/games/ipd/IteratedPrisonersDilemmaTest.java`
 
 ---
 
