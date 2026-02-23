@@ -422,6 +422,7 @@ Simplest possible strategy — always returns `PrisonerAction.COOPERATE`.
 ### TICKET-013 — Implement `TitForTat` Participant
 **Priority:** High
 **Depends on:** TICKET-011
+**Status:** Done — `src/main/java/sits/games/ipd/TitForTat.java`
 
 Mirrors opponent's last action; cooperates on the first round.
 
@@ -435,9 +436,10 @@ public Action chooseAction(GameHistory history) {
 ```
 
 **Acceptance Criteria:**
-- [ ] First round always returns `COOPERATE`
-- [ ] Subsequent rounds return opponent's last action
-- [ ] `reset()` is a no-op (state is fully derived from `GameHistory`)
+- [x] First round always returns `COOPERATE`
+- [x] Subsequent rounds return opponent's last action
+- [x] `reset()` is a no-op (state is fully derived from `GameHistory`)
+- [x] Tests in `sits/games/ipd/TitForTatTest.java`
 
 ---
 
