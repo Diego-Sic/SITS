@@ -66,7 +66,7 @@ class IteratedPrisonersDilemmaTest {
         IteratedPrisonersDilemma game = new IteratedPrisonersDilemma(5);
         GameResult result = game.play(new TitForTat(), new AlwaysCooperate());
 
-        // Both cooperate every round → draw
+        // Both cooperate every round so it's a draw
         assertThat(result.getWinner()).isEqualTo("DRAW");
     }
 

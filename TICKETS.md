@@ -522,6 +522,7 @@ public IteratedPrisonersDilemma(int rounds);
 ### TICKET-016 — Create `TournamentFormat` Interface
 **Priority:** High
 **Depends on:** TICKET-011, TICKET-005
+**Status:** Done — `src/main/java/sits/core/TournamentFormat.java`
 
 Strategy interface for tournament organization.
 
@@ -532,9 +533,10 @@ public interface TournamentFormat {
 ```
 
 **Acceptance Criteria:**
-- [ ] Single method `run()`
-- [ ] Returns `TournamentResult`
-- [ ] Accepts any `Game` instance
+- [x] Single method `run()`
+- [x] Returns `TournamentResult`
+- [x] Accepts any `Game` instance
+- [x] Tests in `sits/core/TournamentFormatTest.java`
 
 ---
 
