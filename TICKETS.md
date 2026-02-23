@@ -259,6 +259,7 @@ Aggregates all `GameResult` objects from a completed tournament.
 ### TICKET-006 — Create `MoveEvent` Class
 **Priority:** High
 **Depends on:** TICKET-002, TICKET-003
+**Status:** Done — `src/main/java/sits/core/MoveEvent.java`
 
 Event object fired after every round.
 
@@ -267,8 +268,9 @@ Event object fired after every round.
 - `history : GameHistory` (full history at the moment the event fires)
 
 **Acceptance Criteria:**
-- [ ] Immutable once constructed
-- [ ] Carries a complete, up-to-date `GameHistory` (not just the latest round)
+- [x] Immutable once constructed
+- [x] Carries a complete, up-to-date `GameHistory` (not just the latest round)
+- [x] Tests in `sits/core/MoveEventTest.java`
 
 ---
 
