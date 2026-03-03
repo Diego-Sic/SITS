@@ -1,16 +1,13 @@
 package sits.core;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class GameTest {
-
-    private static final Action ACTION = () -> "TEST";
 
     static class StubGame extends Game {
         private final int maxRounds;
@@ -19,7 +16,7 @@ class GameTest {
 
         @Override
         protected RoundResult doRound(Participant p1, Participant p2, GameHistory history) {
-            return new RoundResult(ACTION, ACTION, 1, 1);
+            return new RoundResult(() -> "TEST", () -> "TEST", 1, 1);
         }
 
         @Override
@@ -40,7 +37,7 @@ class GameTest {
         StubParticipant(String name) { this.name = name; }
 
         @Override public String getName() { return name; }
-        @Override public Action chooseAction(GameHistory history) { return ACTION; }
+        @Override public Action chooseAction(GameHistory history) { return () -> "TEST"; }
         @Override public void reset() { resetCount++; }
     }
 
@@ -52,7 +49,6 @@ class GameTest {
         @Override
         public void onMoveMade(MoveEvent event) {
             moveEvents.add(event);
-            // grab size while the event is still live, not after :0
             historySizesAtNotification.add(event.getHistory().getRounds().size());
         }
 
@@ -67,7 +63,7 @@ class GameTest {
     private StubParticipant p2;
 
     @BeforeEach
-    void setUp() {
+    void setup() {
         p1 = new StubParticipant("Alice");
         p2 = new StubParticipant("Bob");
     }
