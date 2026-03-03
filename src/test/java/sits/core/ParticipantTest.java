@@ -7,7 +7,7 @@ class ParticipantTest {
 
     private static final Action ACTION = () -> "TEST";
 
-    /** Stateless participant, we ensure that returns the same action, and same parameters. */
+    // always returns the same action, no surprises :D
     static class StatelessParticipant implements Participant {
         private final String name;
 
@@ -18,7 +18,6 @@ class ParticipantTest {
         @Override public void reset()                              { /*This is so it doesn't keep track*/ }
     }
 
-    /** tracks how many times reset() was called. */
     static class StatefulParticipant implements Participant {
         int resetCount = 0;
 
@@ -41,7 +40,6 @@ class ParticipantTest {
 
         Participant p = new StatelessParticipant("Alice");
 
-        // Participant receives the full history — no exception, no truncation
         Action chosen = p.chooseAction(history);
         assertThat(chosen).isNotNull();
     }
@@ -69,7 +67,6 @@ class ParticipantTest {
     @Test
     void resetOnStatelessParticipantDoesNotThrow() {
         Participant p = new StatelessParticipant("Alice");
-        // reset() must be safe to call even if there is nothing to clear
         org.junit.jupiter.api.Assertions.assertDoesNotThrow(p::reset);
     }
 }

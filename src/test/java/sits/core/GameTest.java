@@ -12,7 +12,6 @@ class GameTest {
 
     private static final Action ACTION = () -> "TEST";
 
-    /** Plays exactly maxRounds rounds, always returning a fixed RoundResult. */
     static class StubGame extends Game {
         private final int maxRounds;
 
@@ -53,7 +52,7 @@ class GameTest {
         @Override
         public void onMoveMade(MoveEvent event) {
             moveEvents.add(event);
-            // Record size NOW, while the notification is live — not post-hoc
+            // grab size while the event is still live, not after :0
             historySizesAtNotification.add(event.getHistory().getRounds().size());
         }
 

@@ -18,15 +18,9 @@ public class GameHistory {
     public String getNameP1() { return nameP1; }
     public String getNameP2() { return nameP2; }
 
-    /**
-     * Returns the mutable list of rounds. Callers add super important to remember this @Robert
-     * RoundResult objects directly to this list during the game loop.
-     */
+    // careful, this list is mutable! don't forget @Robert :0
     public List<RoundResult> getRounds() { return rounds; }
 
-    /**
-     * Returns the last RoundResult, or null if no rounds have been played yet.
-     */
     public RoundResult getLastRound() {
         if (rounds.isEmpty()) return null;
         return rounds.get(rounds.size() - 1);

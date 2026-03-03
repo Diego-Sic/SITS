@@ -18,10 +18,6 @@ public class TournamentResult {
         return Collections.unmodifiableList(results);
     }
 
-    /**
-     * Returns total accumulated score per player across all games.
-     * Player names are keys; insertion order reflects first appearance.
-     */
     public Map<String, Integer> getSummary() {
         Map<String, Integer> scores = new LinkedHashMap<>();
         for (GameResult result : results) {

@@ -31,7 +31,7 @@ class RoundRobinTest {
                 List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat()),
                 new IteratedPrisonersDilemma(3));
 
-        // 3 players → 3 unique pairs: (0,1), (0,2), (1,2)
+        // 3 players = 3 pairs :D
         assertThat(result.getResults()).hasSize(3);
     }
 
@@ -42,7 +42,7 @@ class RoundRobinTest {
                 List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat(), new AlwaysCooperate()),
                 new IteratedPrisonersDilemma(3));
 
-        // 4 players → 6 unique pairs: n*(n-1)/2
+        // 4 players → 6 pairs: n*(n-1)/2
         assertThat(result.getResults()).hasSize(6);
     }
 
@@ -53,7 +53,7 @@ class RoundRobinTest {
                 List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat()),
                 new IteratedPrisonersDilemma(1));
 
-        // Verify no pair of player names appears twice in swapped order
+        // no rematches allowed :D
         List<GameResult> results = result.getResults();
         for (int i = 0; i < results.size(); i++) {
             for (int j = i + 1; j < results.size(); j++) {
@@ -79,7 +79,7 @@ class RoundRobinTest {
 
         new RoundRobin().run(List.of(p1, p2, p3), new IteratedPrisonersDilemma(1));
 
-        // Each participant plays 2 matches in a 3-player round robin → reset called twice each
+        // 3-player RR = 2 games each, so reset runs twice :D
         assertThat(p1.resetCount).isEqualTo(2);
         assertThat(p2.resetCount).isEqualTo(2);
         assertThat(p3.resetCount).isEqualTo(2);

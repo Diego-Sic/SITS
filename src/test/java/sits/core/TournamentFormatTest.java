@@ -11,9 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TournamentFormatTest {
 
-    /**
-     * Minimal implementation
-     * */
     static class SingleMatchFormat implements TournamentFormat {
         @Override
         public TournamentResult run(List<Participant> participants, Game game) {

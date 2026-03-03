@@ -7,24 +7,14 @@ import sits.core.TournamentResult;
 
 import java.util.Map;
 
-/**
- * Concrete observer that prints tournament activity to the console.
- * Implements the Observer patterns
- * No game logic lives here; it only reads from the event objects it receives.
- */
 public class ConsoleObserver implements GameObserver {
 
     private static final String DIVIDER = "=".repeat(60);
     private static final String THIN    = "-".repeat(60);
 
-    // Tracks how many games have started so we can label each match header.
-    // State is safe here because this observer is created once per tournament run.
+    // need this to label matches :D
     private int matchCount = 0;
 
-    /**
-     * We detect the start of a new game when round == 1
-     * and print the match header inline
-     */
     @Override
     public void onMoveMade(MoveEvent event) {
         int round = event.getHistory().getRounds().size();
@@ -41,15 +31,11 @@ public class ConsoleObserver implements GameObserver {
             System.out.println(DIVIDER);
         }
 
-        // %-20s left-aligns names in a 20-char field so columns line up regardless of name length
+        // %-20s keeps the columns lined up nicely :D
         System.out.printf("  Round %3d | %-20s %-10s (+%d) | %-20s %-10s (+%d)%n",
                 round, p1, a1, pay1, p2, a2, pay2);
     }
 
-    /**
-     * Fired once when a game ends. Scores come pre-computed from GameResult,
-     * which summed payoffs across all rounds inside computeFinalResult().
-     */
     @Override
     public void onGameOver(GameResult result) {
         String p1     = result.getHistory().getNameP1();
@@ -65,12 +51,6 @@ public class ConsoleObserver implements GameObserver {
         System.out.println();
     }
 
-    /**
-     * Fired once by RoundRobin after all matches are complete.
-     * getSummary() merges scores by strategy name across all instances,
-     * so multiple TitForTat players appear as one aggregated entry.
-     * Entries are sorted descending so the winner appears first.
-     */
     @Override
     public void onTournamentOver(TournamentResult result) {
         System.out.println(DIVIDER);

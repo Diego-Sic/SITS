@@ -33,10 +33,6 @@ public class IteratedPrisonersDilemma extends Game {
         return new GameResult(history);
     }
 
-    /**
-     * The only place in the system that references PrisonerAction by name.
-     * Fails loudly with IllegalArgumentException on unrecognized action types.
-     */
     private int[] getPayoff(Action a1, Action a2) {
         if (a1 == PrisonerAction.COOPERATE && a2 == PrisonerAction.COOPERATE) return new int[]{3, 3};
         if (a1 == PrisonerAction.COOPERATE && a2 == PrisonerAction.DEFECT)    return new int[]{0, 5};

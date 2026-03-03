@@ -75,7 +75,7 @@ class IteratedPrisonersDilemmaTest {
         IteratedPrisonersDilemma game = new IteratedPrisonersDilemma(5);
         GameResult result = game.play(new TitForTat(), new AlwaysDefect());
 
-        // TitForTat cooperates round 1 (loses), then defects for remaining 4 → AlwaysDefect wins
+        // TFT cooperates first (oops), then mirrors defects — AlwaysDefect still wins :0
         assertThat(result.getWinner()).isEqualTo("AlwaysDefect");
     }
 

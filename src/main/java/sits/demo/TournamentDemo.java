@@ -10,11 +10,7 @@ import sits.tournament.RoundRobin;
 
 import java.util.List;
 
-/**
- * Population is intentionally skewed toward TitForTat (5 instances)
- * to replicate Axelrod's result: in a realistic mixed population,
- * cooperative strategies outperform pure defection over the long run. or at least that's what Youtube Said
- */
+// more TitForTat than anything else to see if Axelrod's thing holds up — at least that's what YouTube said :D
 public class TournamentDemo {
 
     private static final String DIVIDER = "=".repeat(60);
@@ -22,9 +18,7 @@ public class TournamentDemo {
     public static void main(String[] args) {
         int rounds = 200;
 
-        // 9 players → n*(n-1)/2 = 36 unique matches → 7200 total rounds.
-        // Multiple instances of the same strategy are allowed; their scores
-        // are aggregated by name in TournamentResult.getSummary().
+        // 9 players = 36 matches = 7200 rounds total :0
         var participants = List.of(
                 new TitForTat(),
                 new TitForTat(),
@@ -53,8 +47,6 @@ public class TournamentDemo {
         System.out.println("    2 x AlwaysDefect    — never cooperates");
         System.out.println();
 
-        // A single Game instance is reused across all matches.
-        // Observers registered here receive events for every match in the tournament.
         IteratedPrisonersDilemma game = new IteratedPrisonersDilemma(rounds);
 
         ConsoleObserver console = new ConsoleObserver();
@@ -62,8 +54,6 @@ public class TournamentDemo {
         game.addObserver(new MoveLogger("moves.log"));      // persists every move to file
         game.addObserver(new ScoreLogger("scores.log"));    // persists final scores to file
 
-        // RoundRobin has its own observer list for the tournament-level event.
-        // The same ConsoleObserver instance handles both game and tournament events.
         RoundRobin roundRobin = new RoundRobin();
         roundRobin.addObserver(console);
 

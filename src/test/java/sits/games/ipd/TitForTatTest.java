@@ -47,7 +47,7 @@ class TitForTatTest {
         history.getRounds().add(new RoundResult(PrisonerAction.COOPERATE, PrisonerAction.DEFECT, 0, 5));
         history.getRounds().add(new RoundResult(PrisonerAction.DEFECT, PrisonerAction.COOPERATE, 5, 0));
 
-        // Opponent's last action was COOPERATE — TitForTat should mirror that
+        // last opponent move was COOPERATE so TFT should do the same :D
         assertThat(tft.chooseAction(history)).isEqualTo(PrisonerAction.COOPERATE);
     }
 

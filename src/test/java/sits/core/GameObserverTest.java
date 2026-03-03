@@ -9,9 +9,6 @@ class GameObserverTest {
 
     private static final Action COOPERATE = () -> "COOPERATE";
 
-    /**
-     * Test-only observer that records every event it receives.
-     */
     static class CapturingObserver implements GameObserver {
         List<MoveEvent> moveEvents = new ArrayList<>();
         List<GameResult> gameResults = new ArrayList<>();

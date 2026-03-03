@@ -40,7 +40,6 @@ public class MoveLogger implements GameObserver {
 
     @Override
     public void onTournamentOver(TournamentResult result) {
-        // no-op — MoveLogger only tracks round-by-round moves
     }
 
     private void writeLine(String line) {

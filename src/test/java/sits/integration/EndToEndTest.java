@@ -49,7 +49,7 @@ class EndToEndTest {
                 List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat()),
                 game);
 
-        // 3 matches × 200 rounds + 3 separators that's according of what we formatted
+        // 3 matches × 200 rounds + 3 "---" separators = 603 lines :D
         assertThat(Files.readAllLines(moveLog)).hasSize(603);
     }
 
@@ -102,7 +102,7 @@ class EndToEndTest {
                 List.of(new AlwaysCooperate(), new AlwaysDefect()),
                 game);
 
-        // MoveLogger uses getLabel() only — the enum class name must never appear
+        // should only see "COOPERATE"/"DEFECT", never the enum class name :D
         assertThat(Files.readString(moveLog)).doesNotContain("PrisonerAction");
     }
 
