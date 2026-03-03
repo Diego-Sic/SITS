@@ -10,7 +10,7 @@ import sits.tournament.RoundRobin;
 
 import java.util.List;
 
-// more TitForTat than anything else to see if Axelrod's thing holds up — at least that's what YouTube said :D
+// Replicates Axelrod's tournament: heavier TitForTat population to test cooperative dominance
 public class TournamentDemo {
 
     private static final String DIVIDER = "=".repeat(60);
@@ -18,49 +18,40 @@ public class TournamentDemo {
     public static void main(String[] args) {
         int rounds = 200;
 
-        // 9 players = 36 matches = 7200 rounds total :0
+        // Step 1: Build the participant pool
         var participants = List.of(
+                new TitForTat(),        // mirrors opponent's last move, cooperates first
                 new TitForTat(),
                 new TitForTat(),
                 new TitForTat(),
                 new TitForTat(),
-                new TitForTat(),
+                new AlwaysCooperate(),  // never defects
                 new AlwaysCooperate(),
-                new AlwaysCooperate(),
-                new AlwaysDefect(),
+                new AlwaysDefect(),     // never cooperates
                 new AlwaysDefect()
         );
 
+        int n       = participants.size();
+        int matches = n * (n - 1) / 2;
+
         System.out.println(DIVIDER);
-        System.out.println("  SITS — Iterated Prisoner's Dilemma Tournament");
-        System.out.printf("  %d rounds per match | Round Robin format%n", rounds);
-        System.out.printf("  %d players | %d matches | %d total rounds%n",
-                participants.size(),
-                participants.size() * (participants.size() - 1) / 2,
-                participants.size() * (participants.size() - 1) / 2 * rounds);
+        System.out.printf("  SITS — Iterated Prisoner's Dilemma Tournament%n");
+        System.out.printf("  %d players | %d matches | %d rounds each%n", n, matches, rounds);
         System.out.println(DIVIDER);
         System.out.println();
 
-        System.out.println("  Population:");
-        System.out.println("    5 x TitForTat      — mirrors opponent's last move, cooperates first");
-        System.out.println("    2 x AlwaysCooperate — never defects");
-        System.out.println("    2 x AlwaysDefect    — never cooperates");
-        System.out.println();
-
+        // Step 2: Configure the game and wire up observers
         IteratedPrisonersDilemma game = new IteratedPrisonersDilemma(rounds);
-
         ConsoleObserver console = new ConsoleObserver();
-        game.addObserver(console);                          // live round-by-round output
-        game.addObserver(new MoveLogger("moves.log"));      // persists every move to file
-        game.addObserver(new ScoreLogger("scores.log"));    // persists final scores to file
+        game.addObserver(console);                           // prints match headers and results
+        game.addObserver(new MoveLogger("moves.log"));       // logs every move to file
+        game.addObserver(new ScoreLogger("scores.log"));     // logs final scores to file
 
+        // Step 3: Run the round-robin tournament
         RoundRobin roundRobin = new RoundRobin();
         roundRobin.addObserver(console);
-
         roundRobin.run(participants, game);
 
-        System.out.println();
-        System.out.println("  Log files written: moves.log, scores.log");
-        System.out.println("  (scores aggregated by strategy across all instances)");
+        System.out.println("  Log files: moves.log, scores.log");
     }
 }
