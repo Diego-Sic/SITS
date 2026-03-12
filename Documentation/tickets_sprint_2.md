@@ -163,7 +163,7 @@ Use `MockRestServiceServer` or a stub `RestTemplate` to avoid real HTTP:
 
 ---
 
-## S2-04 · `HumanParticipant`
+## S2-04 · `HumanParticipant` [COMPLETED]
 
 **Package:** `sits.participants`
 
