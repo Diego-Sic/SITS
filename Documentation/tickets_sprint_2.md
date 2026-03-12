@@ -207,7 +207,7 @@ public HumanParticipant(String name, InputStream in)  // injectable for tests
 
 ---
 
-## S2-05 · `TournamentStatus` + `NetworkedTournament`
+## S2-05 · `TournamentStatus` + `NetworkedTournament` [COMPLETED]
 
 **Package:** `sits.server`
 
