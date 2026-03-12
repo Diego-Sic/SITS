@@ -1,0 +1,240 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+direction TB
+    class Action {
+	    +getLabel() String
+    }
+
+    class Participant {
+	    +getName() String
+	    +chooseAction(GameHistory history) Action
+	    +reset() void
+    }
+
+    class GameObserver {
+	    +onMoveMade(MoveEvent event) void
+	    +onGameOver(GameResult result) void
+	    +onTournamentOver(TournamentResult result) void
+    }
+
+    class TournamentFormat {
+	    +run(List~Participant~ participants, Game game) TournamentResult
+    }
+
+    class Game {
+	    -List~GameObserver~ observers
+	    +addObserver(GameObserver o) void
+	    +removeObserver(GameObserver o) void
+	    +play(Participant p1, Participant p2) GameResult
+	    #doRound(Participant p1, Participant p2, GameHistory history) RoundResult
+	    #isOver(GameHistory history) boolean
+	    #computeFinalResult(GameHistory history) GameResult
+    }
+
+    class GameHistory {
+	    -String nameP1
+	    -String nameP2
+	    -List~RoundResult~ rounds
+	    +getNameP1() String
+	    +getNameP2() String
+	    +getRounds() List~RoundResult~
+	    +getLastRound() RoundResult
+    }
+
+    class RoundResult {
+	    -Action actionP1
+	    -Action actionP2
+	    -int payoffP1
+	    -int payoffP2
+	    +getActionP1() Action
+	    +getActionP2() Action
+	    +getPayoffP1() int
+	    +getPayoffP2() int
+    }
+
+    class GameResult {
+	    -GameHistory history
+	    -String winner
+	    -int totalScoreP1
+	    -int totalScoreP2
+	    +getHistory() GameHistory
+	    +getWinner() String
+	    +getTotalScoreP1() int
+	    +getTotalScoreP2() int
+    }
+
+    class TournamentResult {
+	    -List~GameResult~ results
+	    +results() List~GameResult~
+	    +getSummary() Map~String, Integer~
+    }
+
+    class RoundRobin {
+	    -List~GameObserver~ observers
+	    +addObserver(GameObserver o) void
+	    +removeObserver(GameObserver o) void
+	    +run(List~Participant~ participants, Game game) TournamentResult
+    }
+
+    class GameHistoryDTO {
+	    +String nameP1
+	    +String nameP2
+	    +List~RoundResultDTO~ rounds
+	    +toGameHistory() GameHistory
+	    +fromGameHistory(GameHistory h) GameHistoryDTO$
+    }
+
+    class RoundResultDTO {
+	    +String actionP1
+	    +String actionP2
+	    +int payoffP1
+	    +int payoffP2
+    }
+
+    class RegistrationRequest {
+	    +String name
+	    +String ip
+	    +int port
+    }
+
+    class StringAction {
+	    -String label
+	    +StringAction(String label)
+	    +getLabel() String
+    }
+
+    class TournamentStatus {
+	    REGISTERING
+	    RUNNING
+	    COMPLETED
+    }
+
+    class NetworkedTournament {
+	    -String id
+	    -String name
+	    -TournamentFormat format
+	    -Game game
+	    -List~Participant~ participants
+	    -TournamentStatus status
+	    +getId() String
+	    +getName() String
+	    +getStatus() TournamentStatus
+	    +addRemoteParticipant(RegistrationRequest req) void
+	    +start() TournamentResult
+    }
+
+    class TournamentRegistry {
+	    -Map~String, NetworkedTournament~ tournaments
+	    +add(NetworkedTournament t) void
+	    +get(String id) NetworkedTournament
+	    +listRegistering() List~NetworkedTournament~
+    }
+
+    class TournamentServerController {
+	    -TournamentRegistry registry
+	    +getTournaments() List~NetworkedTournament~
+	    +register(String id, RegistrationRequest body) ResponseEntity
+	    +start(String id) TournamentResult
+    }
+
+    class RemoteParticipant {
+	    -String name
+	    -String clientUrl
+	    -Function~String, Action~ actionFactory
+	    +RemoteParticipant(String name, String clientUrl, Function~String, Action~ factory)
+	    +getName() String
+	    +chooseAction(GameHistory history) Action
+	    +reset() void
+    }
+
+    class ClientApp {
+	    -int port
+	    -String serverUrl
+	    -String tournamentId
+	    -String participantName
+	    -TournamentServerClient client
+	    +onApplicationReady() void
+    }
+
+    class ParticipantController {
+	    -Participant participant
+	    +getName() String
+	    +getAction(GameHistoryDTO dto) String
+	    +reset() void
+    }
+
+    class TournamentServerClient {
+	    -String serverUrl
+	    +TournamentServerClient(String serverUrl)
+	    +listTournaments() List~NetworkedTournament~
+	    +register(String tournamentId, String name, String ip, int port) void
+    }
+
+    class HumanParticipant {
+	    -String name
+	    -Scanner scanner
+	    +HumanParticipant(String name)
+	    +getName() String
+	    +chooseAction(GameHistory history) Action
+	    +reset() void
+    }
+
+	<<interface>> Action
+	<<interface>> Participant
+	<<interface>> GameObserver
+	<<interface>> TournamentFormat
+	<<abstract>> Game
+	<<record>> TournamentResult
+	<<enum>> TournamentStatus
+	<<RestController>> TournamentServerController
+	<<SpringBootApplication>> ClientApp
+	<<RestController>> ParticipantController
+
+    RoundRobin ..|> TournamentFormat : IS-A
+    StringAction ..|> Action : IS-A
+    RemoteParticipant ..|> Participant : IS-A
+    HumanParticipant ..|> Participant : IS-A
+    Game "1" o-- "*" GameObserver : HAS-A
+    RoundRobin "1" o-- "*" GameObserver : HAS-A
+    GameHistory "1" *-- "*" RoundResult : HAS-A
+    RoundResult *-- Action : HAS-A
+    GameResult "1" *-- "1" GameHistory : HAS-A
+    TournamentResult "1" *-- "*" GameResult : HAS-A
+    NetworkedTournament "1" *-- "1" TournamentStatus : HAS-A
+    NetworkedTournament "1" *-- "1" TournamentFormat : HAS-A
+    NetworkedTournament "1" *-- "1" Game : HAS-A
+    NetworkedTournament "1" o-- "*" Participant : HAS-A
+    TournamentRegistry "1" *-- "*" NetworkedTournament : HAS-A
+    TournamentServerController "1" *-- "1" TournamentRegistry : HAS-A
+    ParticipantController "1" o-- "1" Participant : HAS-A
+    ClientApp "1" *-- "1" TournamentServerClient : HAS-A
+    ClientApp ..> ParticipantController : configures
+    GameHistoryDTO "1" *-- "*" RoundResultDTO : HAS-A
+    RemoteParticipant ..> GameHistoryDTO : serializes to
+    RemoteParticipant ..> ParticipantController : POST /action
+    ParticipantController ..> GameHistoryDTO : deserializes
+    NetworkedTournament ..> RegistrationRequest : uses
+    NetworkedTournament ..> RemoteParticipant : creates
+    TournamentServerClient ..> TournamentServerController : POST /register
+    Game ..> GameHistory : uses
+    Game ..> Participant : uses
+    TournamentFormat ..> TournamentResult : returns
+    NetworkedTournament ..> TournamentResult : returns
+    GameObserver ..> TournamentResult : uses
+
+	class RoundResultDTO:::Rose
+	class RegistrationRequest:::Rose
+	class StringAction:::Rose
+	class TournamentStatus:::Rose
+	class NetworkedTournament:::Rose
+	class TournamentRegistry:::Rose
+	class TournamentServerController:::Rose
+	class RemoteParticipant:::Rose
+	class ClientApp:::Rose
+	class ParticipantController:::Rose
+	class TournamentServerClient:::Rose
+
+	classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236

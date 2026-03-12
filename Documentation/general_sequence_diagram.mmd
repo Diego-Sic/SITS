@@ -1,0 +1,53 @@
+sequenceDiagram
+    %% ═══════════════════════════════════════════════════════════════════════
+    %% PART 1 — Registration
+    %% ═══════════════════════════════════════════════════════════════════════
+
+    participant CA as Client App
+    participant TS as Tournament Server
+
+    Note over CA, TS: Registration Phase
+
+    CA ->> TS: Request available tournaments
+    TS -->> CA: List of open tournaments
+
+    Note over CA: Discovers own IP and port on startup
+    CA ->> TS: Register (name, ip, port)
+    TS ->> TS: Create remote participant slot
+    TS -->> CA: Registration confirmed
+
+    %% ═══════════════════════════════════════════════════════════════════════
+    %% PART 2 — Tournament Execution
+    %% ═══════════════════════════════════════════════════════════════════════
+
+    participant Admin as Admin
+    participant GE as Game Engine
+    participant RP as Remote Participant
+    participant Obs as Observers
+
+    Note over Admin, Obs: Tournament Execution Phase
+
+    Admin ->> TS: Start tournament
+    TS ->> GE: Run all pairs
+
+    loop Each pair of participants
+        GE ->> RP: Reset before match
+        RP ->> CA: Forward reset
+        CA -->> RP: OK
+
+        loop Each round
+            GE ->> RP: Request action (game history)
+            RP ->> CA: Send history, ask for action
+            CA ->> CA: Local participant decides
+            CA -->> RP: Return action label
+            RP -->> GE: Return concrete action
+            GE ->> GE: Compute payoff
+            GE ->> Obs: Notify move made
+        end
+
+        GE ->> Obs: Notify game over
+    end
+
+    GE ->> Obs: Notify tournament over
+    GE -->> TS: Tournament result
+    TS -->> Admin: Return results
