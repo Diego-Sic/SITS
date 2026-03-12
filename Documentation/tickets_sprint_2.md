@@ -112,7 +112,7 @@ No-arg constructor + all-args constructor.
 
 ---
 
-## S2-03 · `RemoteParticipant`
+## S2-03 · `RemoteParticipant` [COMPLETED]
 
 **Package:** `sits.networking`
 
