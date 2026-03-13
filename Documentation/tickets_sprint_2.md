@@ -442,7 +442,7 @@ Use `MockMvc` with `@WebMvcTest`:
 
 ---
 
-## S2-09 · `TournamentServerClient`
+## S2-09 · `TournamentServerClient` [COMPLETED]
 
 **Package:** `sits.client`
 
