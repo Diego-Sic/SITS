@@ -318,7 +318,7 @@ public List<NetworkedTournament> listRegistering()     // only REGISTERING tourn
 
 ---
 
-## S2-07 · `TournamentServerController`
+## S2-07 · `TournamentServerController` [COMPLETED]
 
 **Package:** `sits.server`
 
