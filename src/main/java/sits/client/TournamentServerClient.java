@@ -3,13 +3,11 @@ package sits.client;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import sits.networking.dto.RegistrationRequest;
 import sits.server.NetworkedTournament;
 
-@Component
 public class TournamentServerClient {
 
     private final String serverUrl;
