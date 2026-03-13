@@ -383,7 +383,7 @@ Use `MockMvc` with `@WebMvcTest`:
 
 ---
 
-## S2-08 · `ParticipantController`
+## S2-08 · `ParticipantController` [COMPLETED]
 
 **Package:** `sits.client`
 
