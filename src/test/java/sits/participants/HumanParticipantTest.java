@@ -3,6 +3,7 @@ package sits.participants;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
@@ -48,5 +49,11 @@ class HumanParticipantTest {
         GameHistory history = new GameHistory("Alice", "Bob");
         Action action = p.chooseAction(history);
         assertInstanceOf(StringAction.class, action);
+    }
+
+    @Test
+    void reset_doesNotThrow() {
+        HumanParticipant p = participantWith("COOPERATE\n");
+        assertDoesNotThrow(p::reset);
     }
 }
