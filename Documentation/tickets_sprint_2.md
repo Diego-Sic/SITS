@@ -22,27 +22,32 @@ Sprint 2 extends SITS across a network boundary. Work is broken into 12 tickets 
 A minimal `Action` implementation that wraps a raw label string. Used exclusively on the **client side** inside `GameHistoryDTO.toGameHistory()` to satisfy the `Action` type contract when reconstructing a `GameHistory` from JSON. No other code ever instantiates it directly.
 
 **Fields:**
+
 ```java
 private final String label;
 ```
 
 **Constructor:**
+
 ```java
 public StringAction(String label)
 ```
 
 **Methods:**
+
 ```java
 @Override public String getLabel() // returns label
 ```
 
 **Acceptance criteria:**
+
 - Implements `sits.core.Action`
 - `getLabel()` returns exactly the string passed to the constructor
 - Is immutable (field is final)
 - No other methods needed
 
 **Tests to write (`sits.networking.StringActionTest`):**
+
 - `getLabel_returnsConstructorArgument()`
 - `implementsAction()`
 
@@ -98,11 +103,13 @@ public int port;
 No-arg constructor + all-args constructor.
 
 **Acceptance criteria:**
+
 - All three classes serialize/deserialize with Jackson (no `@JsonProperty` needed if using public fields)
 - `GameHistoryDTO.fromGameHistory(h).toGameHistory()` round-trips correctly — player names preserved, round count preserved, labels preserved
 - `GameHistory` and `RoundResult` are **never modified**
 
 **Tests to write (`sits.networking.dto.GameHistoryDTOTest`):**
+
 - `fromGameHistory_preservesPlayerNames()`
 - `fromGameHistory_preservesRoundCount()`
 - `fromGameHistory_preservesActionLabels()`
@@ -120,6 +127,7 @@ No-arg constructor + all-args constructor.
 A proxy that implements `Participant`. Callers (e.g., `Game.doRound()`) see it as a normal participant. Underneath, each `chooseAction()` call makes a synchronous HTTP POST to the client machine and converts the returned label string back into a real `Action` using an injected factory.
 
 **Fields:**
+
 ```java
 private final String name;
 private final String clientUrl;          // e.g. "http://192.168.1.5:51234"
@@ -128,12 +136,14 @@ private final RestTemplate restTemplate;
 ```
 
 **Constructor:**
+
 ```java
 public RemoteParticipant(String name, String clientUrl, Function<String, Action> actionFactory)
 // Internally creates a new RestTemplate
 ```
 
 **Methods:**
+
 ```java
 @Override public String getName()   // returns name — NO HTTP call
 @Override public Action chooseAction(GameHistory history) {
@@ -147,6 +157,7 @@ public RemoteParticipant(String name, String clientUrl, Function<String, Action>
 ```
 
 **Acceptance criteria:**
+
 - Implements `sits.core.Participant`
 - `getName()` never calls the network
 - `chooseAction()` POSTs to `{clientUrl}/action` with a `GameHistoryDTO` body and applies the factory to the response
@@ -155,6 +166,7 @@ public RemoteParticipant(String name, String clientUrl, Function<String, Action>
 
 **Tests to write (`sits.networking.RemoteParticipantTest`):**
 Use `MockRestServiceServer` or a stub `RestTemplate` to avoid real HTTP:
+
 - `getName_returnsNameWithoutHttp()`
 - `chooseAction_postsToClientUrl()`
 - `chooseAction_appliesFactoryToLabel()`
@@ -171,18 +183,21 @@ Use `MockRestServiceServer` or a stub `RestTemplate` to avoid real HTTP:
 Prompts a human through `System.out` and reads their choice from `System.in`. Works with any game — it prints the available labels from the last round (if any) and asks the human to type one.
 
 **Fields:**
+
 ```java
 private final String name;
 private final Scanner scanner;
 ```
 
 **Constructor:**
+
 ```java
 public HumanParticipant(String name)         // uses System.in
 public HumanParticipant(String name, InputStream in)  // injectable for tests
 ```
 
 **Methods:**
+
 ```java
 @Override public String getName()
 @Override public Action chooseAction(GameHistory history) {
@@ -194,12 +209,14 @@ public HumanParticipant(String name, InputStream in)  // injectable for tests
 ```
 
 **Acceptance criteria:**
+
 - Implements `sits.core.Participant`
 - `chooseAction()` returns a `StringAction` wrapping whatever the user types
 - Accepts an injectable `InputStream` so tests do not block on stdin
 - `reset()` is a no-op
 
 **Tests to write (`sits.participants.HumanParticipantTest`):**
+
 - `getName_returnsName()`
 - `chooseAction_returnsStringActionFromInput()`
 - `chooseAction_trimsWhitespace()`
@@ -222,6 +239,7 @@ public enum TournamentStatus { REGISTERING, RUNNING, COMPLETED }
 Manages a three-state lifecycle. Wraps any `TournamentFormat` + `Game` combination and exposes registration and start operations.
 
 **Fields:**
+
 ```java
 private final String id;
 private final String name;
@@ -232,12 +250,14 @@ private TournamentStatus status;               // starts as REGISTERING
 ```
 
 **Constructor:**
+
 ```java
 public NetworkedTournament(String id, String name, TournamentFormat format, Game game, List<Participant> initialParticipants)
 // status = REGISTERING; participants list is a new ArrayList initialized from initialParticipants
 ```
 
 **Methods:**
+
 ```java
 public String getId()
 public String getName()
@@ -267,6 +287,7 @@ public NetworkedTournament(String id, String name, TournamentFormat format, Game
 ```
 
 **Acceptance criteria:**
+
 - Starts in `REGISTERING` state
 - `addRemoteParticipant()` throws `IllegalStateException` if not `REGISTERING`
 - `start()` throws `IllegalStateException` if not `REGISTERING`
@@ -274,6 +295,7 @@ public NetworkedTournament(String id, String name, TournamentFormat format, Game
 - Local (pre-loaded) participants run alongside remote ones
 
 **Tests to write (`sits.server.NetworkedTournamentTest`):**
+
 - `initialStatus_isRegistering()`
 - `addRemoteParticipant_addsParticipant()`
 - `addRemoteParticipant_throwsWhenRunning()`
@@ -292,11 +314,13 @@ public NetworkedTournament(String id, String name, TournamentFormat format, Game
 An in-memory registry of all `NetworkedTournament` instances, keyed by ID.
 
 **Fields:**
+
 ```java
 private final Map<String, NetworkedTournament> tournaments = new LinkedHashMap<>();
 ```
 
 **Methods:**
+
 ```java
 public void add(NetworkedTournament t)
 public NetworkedTournament get(String id)              // returns null if not found
@@ -304,12 +328,14 @@ public List<NetworkedTournament> listRegistering()     // only REGISTERING tourn
 ```
 
 **Acceptance criteria:**
+
 - `add()` stores the tournament under its `getId()` key
 - `get()` retrieves by ID
 - `listRegistering()` excludes `RUNNING` and `COMPLETED` tournaments
 - Spring `@Component` so it can be injected
 
 **Tests to write (`sits.server.TournamentRegistryTest`):**
+
 - `add_and_get_byId()`
 - `get_unknownId_returnsNull()`
 - `listRegistering_excludesRunning()`
@@ -327,11 +353,11 @@ Spring `@RestController` that exposes three endpoints for the tournament server.
 
 **Endpoints:**
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/tournaments` | Returns all `REGISTERING` tournaments |
-| `POST` | `/tournaments/{id}/register` | Registers a remote participant |
-| `POST` | `/tournaments/{id}/start` | Starts the tournament (blocking) |
+| Method | Path                         | Description                           |
+| ------ | ---------------------------- | ------------------------------------- |
+| `GET`  | `/tournaments`               | Returns all `REGISTERING` tournaments |
+| `POST` | `/tournaments/{id}/register` | Registers a remote participant        |
+| `POST` | `/tournaments/{id}/start`    | Starts the tournament (blocking)      |
 
 **Implementation:**
 
@@ -368,6 +394,7 @@ public class TournamentServerController {
 ```
 
 **Acceptance criteria:**
+
 - Returns 404 if tournament ID is unknown
 - `POST /register` delegates to `NetworkedTournament.addRemoteParticipant()`
 - `POST /start` is blocking — response is only sent after the full tournament completes
@@ -375,6 +402,7 @@ public class TournamentServerController {
 
 **Tests to write (`sits.server.TournamentServerControllerTest`):**
 Use `MockMvc` with `@WebMvcTest`:
+
 - `getTournaments_returnsRegisteringList()`
 - `register_unknownId_returns404()`
 - `register_validId_returns200()`
@@ -392,11 +420,11 @@ Spring `@RestController` hosted on the **client machine**. The tournament server
 
 **Endpoints:**
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/name` | Returns participant name |
+| Method | Path      | Description                                                      |
+| ------ | --------- | ---------------------------------------------------------------- |
+| `GET`  | `/name`   | Returns participant name                                         |
 | `POST` | `/action` | Accepts `GameHistoryDTO`, returns action label as plain `String` |
-| `POST` | `/reset` | Resets participant state |
+| `POST` | `/reset`  | Resets participant state                                         |
 
 **Implementation:**
 
@@ -428,6 +456,7 @@ public class ParticipantController {
 ```
 
 **Acceptance criteria:**
+
 - `POST /action` deserializes `GameHistoryDTO`, calls `participant.chooseAction()`, returns the label string
 - `POST /reset` calls `participant.reset()`
 - Works with any `Participant` implementation (strategy-agnostic)
@@ -435,6 +464,7 @@ public class ParticipantController {
 
 **Tests to write (`sits.client.ParticipantControllerTest`):**
 Use `MockMvc` with `@WebMvcTest`:
+
 - `getName_returnsParticipantName()`
 - `getAction_callsChooseActionWithHistory()`
 - `getAction_returnsActionLabel()`
@@ -450,17 +480,20 @@ Use `MockMvc` with `@WebMvcTest`:
 A thin REST client (Spring `@Component`) used by `ClientApp` to communicate with the tournament server. Wraps `RestTemplate` calls.
 
 **Fields:**
+
 ```java
 private final String serverUrl;
 private final RestTemplate restTemplate;
 ```
 
 **Constructor:**
+
 ```java
 public TournamentServerClient(@Value("${tournament.server.url}") String serverUrl)
 ```
 
 **Methods:**
+
 ```java
 public List<NetworkedTournament> listTournaments() {
     // GET {serverUrl}/tournaments
@@ -473,19 +506,21 @@ public void register(String tournamentId, String name, String ip, int port) {
 ```
 
 **Acceptance criteria:**
+
 - `listTournaments()` GETs `/tournaments` and returns the list
 - `register()` POSTs a `RegistrationRequest` to `/tournaments/{id}/register`
 - `serverUrl` is injected from `application.properties`
 
 **Tests to write (`sits.client.TournamentServerClientTest`):**
 Use `MockRestServiceServer`:
+
 - `listTournaments_callsCorrectUrl()`
 - `register_postsToCorrectUrl()`
 - `register_sendsCorrectBody()`
 
 ---
 
-## S2-10 · `ClientApp`
+## S2-10 · `ClientApp` [COMPLETADO]
 
 **Package:** `sits.client`
 
@@ -522,6 +557,7 @@ public class ClientApp {
 ```
 
 **Required `application.properties` (client):**
+
 ```properties
 server.port=0
 tournament.server.url=http://<server-ip>:8080
@@ -530,6 +566,7 @@ participant.name=<name>
 ```
 
 **`@Bean` configuration (in the same class or a separate `ClientConfig`):**
+
 ```java
 @Bean
 public Participant participant() {
@@ -544,18 +581,20 @@ public TournamentServerClient tournamentServerClient(
 ```
 
 **Acceptance criteria:**
+
 - `@LocalServerPort` is only read at `ApplicationReadyEvent` (not in constructor)
 - Multiple `ClientApp` instances can run on the same machine simultaneously (random port)
 - The `Participant` bean is injectable into `ParticipantController`
 
 **Tests to write (`sits.client.ClientAppIntegrationTest`):**
 Use `@SpringBootTest(webEnvironment = RANDOM_PORT)` with a mock server:
+
 - `onReady_registersWithTournamentServer()`
 - `portIsNonZeroAfterStartup()`
 
 ---
 
-## S2-11 · `TournamentServerApp`
+## S2-11 · `TournamentServerApp` [COMPLETADO]
 
 **Package:** `sits.server`
 
@@ -588,16 +627,19 @@ public class TournamentServerApp {
 ```
 
 **Required `application.properties` (server):**
+
 ```properties
 server.port=8080
 ```
 
 **Acceptance criteria:**
+
 - Server starts on port 8080
 - At least one tournament is pre-seeded and appears in `GET /tournaments`
 - `TournamentRegistry` is a singleton `@Component`
 
 **Tests to write (`sits.server.TournamentServerAppTest`):**
+
 - `context_loads()` — `@SpringBootTest` smoke test
 - `seedTournaments_registersOneTournament()`
 
@@ -632,11 +674,13 @@ class NetworkedTournamentIntegrationTest {
 ```
 
 **Acceptance criteria:**
+
 - Tournament reaches `COMPLETED` status
 - `TournamentResult` contains results for every participant pair (local + remote)
 - No existing test breaks (all Sprint 1 tests still pass)
 
 ---
+
 ## Constraints
 
 - **No changes to any existing class.** If you find yourself touching `Game`, `RoundRobin`, `GameHistory`, `RoundResult`, `TitForTat`, etc., stop and redesign.
