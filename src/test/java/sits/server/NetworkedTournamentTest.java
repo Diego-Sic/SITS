@@ -8,9 +8,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import sits.core.Action;
 import sits.core.Participant;
 import sits.core.TournamentResult;
+import sits.games.ipd.AlwaysCooperate;
+import sits.games.ipd.AlwaysDefect;
 import sits.games.ipd.IteratedPrisonersDilemma;
 import sits.games.ipd.PrisonerAction;
 import sits.games.ipd.TitForTat;
@@ -75,6 +84,27 @@ class NetworkedTournamentTest {
     void start_transitionsToCompleted() {
         tournament.start();
         assertThat(tournament.getStatus()).isEqualTo(TournamentStatus.COMPLETED);
+    }
+
+    @Test
+    void getBroadcaster_isNotNull() {
+        assertThat(tournament.getBroadcaster()).isNotNull();
+    }
+
+    @Test
+    void start_broadcasterReceivesMoveEvents() throws Exception {
+        NetworkedTournament t = new NetworkedTournament(
+                "t2", "Broadcaster Test",
+                new RoundRobin(),
+                new IteratedPrisonersDilemma(3),
+                List.of(new AlwaysCooperate(), new AlwaysDefect()),
+                PrisonerAction::valueOf);
+
+        SseEmitter emitter = mock(SseEmitter.class);
+        t.getBroadcaster().addEmitter(emitter);
+        t.start();
+
+        verify(emitter, atLeastOnce()).send(any(SseEmitter.SseEventBuilder.class));
     }
 
     @Test

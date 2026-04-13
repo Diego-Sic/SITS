@@ -20,18 +20,28 @@ public class NetworkedTournament {
     private final Game game;
     private final List<Participant> participants;
     private final Function<String, Action> actionFactory;
+    private final ViewerBroadcaster broadcaster;
     private TournamentStatus status;
 
     public NetworkedTournament(String id, String name, TournamentFormat format, Game game,
                                List<Participant> initialParticipants,
-                               Function<String, Action> actionFactory) {
-        this.id = id;
-        this.name = name;
-        this.format = format;
-        this.game = game;
+                               Function<String, Action> actionFactory,
+                               long delayMs) {
+        this.id          = id;
+        this.name        = name;
+        this.format      = format;
+        this.game        = game;
         this.participants = new ArrayList<>(initialParticipants);
         this.actionFactory = actionFactory;
-        this.status = TournamentStatus.REGISTERING;
+        this.broadcaster = new ViewerBroadcaster(delayMs);
+        this.status      = TournamentStatus.REGISTERING;
+    }
+
+    // Convenience overload — no delay, keeps existing callers and tests unchanged.
+    public NetworkedTournament(String id, String name, TournamentFormat format, Game game,
+                               List<Participant> initialParticipants,
+                               Function<String, Action> actionFactory) {
+        this(id, name, format, game, initialParticipants, actionFactory, 0L);
     }
 
     public String getId() {
@@ -66,8 +76,13 @@ public class NetworkedTournament {
             throw new IllegalStateException("Cannot start tournament: tournament is " + status);
         }
         status = TournamentStatus.RUNNING;
+        game.addObserver(broadcaster);
         TournamentResult result = format.run(participants, game);
         status = TournamentStatus.COMPLETED;
         return result;
+    }
+
+    public ViewerBroadcaster getBroadcaster() {
+        return broadcaster;
     }
 }
