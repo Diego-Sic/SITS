@@ -1,0 +1,54 @@
+sequenceDiagram
+    actor User
+    participant VA as ViewerApp
+    participant CC as ConnectController
+    participant SC as ServerConnection
+    participant TSC as TournamentServerController
+    participant VB as ViewerBroadcaster
+
+    Note over VA,VB: Tournament is already running in background (POST /start returned 202)
+
+    VA->>CC: load connect.fxml
+    User->>CC: enter IP + port → click Connect
+    CC->>SC: new ServerConnection(baseUrl)
+    CC->>SC: fetchTournaments()
+    SC->>TSC: GET /tournaments
+    TSC-->>SC: [{id, name, status: "RUNNING"}]
+    SC-->>CC: List~TournamentInfo~
+    CC->>CC: navigate to LobbyController
+
+    User->>CC: select RUNNING tournament → click Watch
+    CC->>CC: navigate to LiveGameController
+
+    CC->>SC: streamMoves(tournamentId, onEvent, onDone)
+    SC->>TSC: GET /tournaments/{id}/stream
+    TSC->>VB: addEmitter(emitter)
+    SC-->>CC: CompletableFuture~Void~
+
+    Note over TSC,VB: Game round executes on background thread
+
+    VB->>VB: onMoveMade(event)
+    VB->>VB: serialize → MoveEventDTO JSON
+    VB->>TSC: emitter.send(json)
+    TSC-->>SC: data: {"type":"MOVE",...}
+    SC->>SC: parse SSE line → MoveEventDTO
+    SC->>CC: Platform.runLater(onEvent)
+    CC->>CC: append move to text area
+
+    Note over CC,VB: Repeat for each round...
+
+    VB->>VB: onTournamentOver(result)
+    VB->>TSC: emitter.send(TOURNAMENT_OVER)
+    VB->>TSC: emitter.complete()
+    TSC-->>SC: data: {"type":"TOURNAMENT_OVER"}
+    SC->>CC: Platform.runLater(onDone)
+    CC->>CC: show final standings
+
+    alt User clicks Back before tournament ends
+        User->>CC: click Back
+        CC->>SC: future.cancel()
+        SC->>TSC: HTTP connection closes
+        TSC->>VB: emitter.onCompletion fires
+        VB->>VB: remove dead emitter from list
+        CC->>CC: navigate back to LobbyController
+    end

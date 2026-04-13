@@ -1,0 +1,183 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+direction TB
+    class GameObserver {
+        +onMoveMade(MoveEvent) void
+        +onGameOver(GameResult) void
+        +onTournamentOver(TournamentResult) void
+    }
+
+    class Game {
+        -List~GameObserver~ observers
+        +addObserver(GameObserver) void
+        +removeObserver(GameObserver) void
+        +play(Participant, Participant) GameResult
+        #notifyMoveMade(MoveEvent) void
+        #notifyGameOver(GameResult) void
+        #doRound(Participant, Participant, GameHistory) RoundResult*
+        #isOver(GameHistory) bool*
+    }
+
+    class MoveEvent {
+        -RoundResult round
+        -GameHistory history
+        +getRound() RoundResult
+        +getHistory() GameHistory
+    }
+
+    class GameResult {
+        -String winner
+        -int totalScoreP1
+        -int totalScoreP2
+        +getWinner() String
+    }
+
+    class TournamentResult {
+        -List~GameResult~ results
+        +getResults() List~GameResult~
+        +getSummary() Map~String,Integer~
+    }
+
+    class TournamentStatus {
+        REGISTERING
+        RUNNING
+        COMPLETED
+    }
+
+    class TournamentRegistry {
+        -Map~String,NetworkedTournament~ tournaments
+        +add(NetworkedTournament) void
+        +get(String) NetworkedTournament
+        +listRegistering() List~NetworkedTournament~
+        +listActive() List~NetworkedTournament~
+    }
+
+    class NetworkedTournament {
+        -String id
+        -String name
+        -TournamentStatus status
+        -Game game
+        -long delayMs
+        -ViewerBroadcaster broadcaster
+        +getId() String
+        +getName() String
+        +getStatus() TournamentStatus
+        +addRemoteParticipant(RegistrationRequest) void
+        +start() TournamentResult
+        +getBroadcaster() ViewerBroadcaster
+    }
+
+    class TournamentServerController {
+        -TournamentRegistry registry
+        -ExecutorService executor
+        +getTournaments() List~TournamentSummary~
+        +register(id, RegistrationRequest) ResponseEntity
+        +start(id) ResponseEntity
+        +streamMoves(id) SseEmitter
+    }
+
+    class RemoteParticipant {
+        -String name
+        -String clientUrl
+        +getName() String
+        +chooseAction(GameHistory) Action
+        +reset() void
+    }
+
+    class ViewerBroadcaster:::newClass {
+        -long delayMs
+        -List~SseEmitter~ emitters
+        -ObjectMapper mapper
+        +addEmitter(SseEmitter) void
+        +onMoveMade(MoveEvent) void
+        +onGameOver(GameResult) void
+        +onTournamentOver(TournamentResult) void
+    }
+
+    class MoveEventDTO:::newClass {
+        +String type
+        +int roundNumber
+        +String p1Name
+        +String p2Name
+        +String action1
+        +String action2
+        +int payoff1
+        +int payoff2
+        +String winner
+        +int totalScore1
+        +int totalScore2
+        +fromMoveEvent(MoveEvent) MoveEventDTO$
+        +gameOver(GameResult) MoveEventDTO$
+        +tournamentOver(TournamentResult) MoveEventDTO$
+    }
+
+    class ViewerApp:::newClass {
+        +main(String[]) void
+        +start(Stage) void
+    }
+
+    class ServerConnection:::newClass {
+        -HttpClient client
+        -String baseUrl
+        +ServerConnection(String baseUrl)
+        +fetchTournaments() List~TournamentInfo~
+        +streamMoves(String, Consumer, Runnable) CompletableFuture~Void~
+    }
+
+    class TournamentInfo:::newClass {
+        +String id
+        +String name
+        +String status
+    }
+
+    class ConnectController:::newClass {
+        +connect() void
+    }
+
+    class LobbyController:::newClass {
+        -ServerConnection connection
+        +refresh() void
+        +watchSelected() void
+    }
+
+    class LiveGameController:::newClass {
+        -ServerConnection connection
+        -CompletableFuture~Void~ stream
+        +initialize() void
+        +back() void
+    }
+
+    <<interface>> GameObserver
+    <<abstract>> Game
+    <<enumeration>> TournamentStatus
+    <<Proxy>> RemoteParticipant
+
+    Game "1" o-- "0..*" GameObserver : observers
+    Game ..> MoveEvent : notifies with
+    Game ..> GameResult : notifies with
+    Game ..> TournamentResult : notifies with
+    ViewerBroadcaster ..|> GameObserver
+    ViewerBroadcaster ..> MoveEventDTO : serializes to
+    ViewerBroadcaster ..> MoveEvent : receives
+    ViewerBroadcaster ..> GameResult : receives
+    ViewerBroadcaster ..> TournamentResult : receives
+    NetworkedTournament --> TournamentStatus
+    NetworkedTournament *-- ViewerBroadcaster : owns (1-to-1)
+    NetworkedTournament --> Game : owns
+    TournamentRegistry *-- NetworkedTournament : stores
+    TournamentServerController --> TournamentRegistry : uses
+    TournamentServerController ..> ViewerBroadcaster : addEmitter()
+    NetworkedTournament --> RemoteParticipant : contains
+    ViewerApp --> ConnectController : loads
+    ConnectController --> LobbyController : navigates to
+    LobbyController --> LiveGameController : navigates to (RUNNING only)
+    ConnectController ..> ServerConnection : creates
+    LobbyController --> ServerConnection : uses
+    LiveGameController --> ServerConnection : uses
+    ServerConnection ..> TournamentInfo : deserializes
+    ServerConnection ..> MoveEventDTO : deserializes
+
+    classDef newClass :,fill:#c8e6c9,stroke:#2e7d32,color:#1b1b1b
