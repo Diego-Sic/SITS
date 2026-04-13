@@ -21,8 +21,7 @@ class TournamentRegistryTest {
                 new RoundRobin(),
                 new IteratedPrisonersDilemma(1),
                 List.of(new TitForTat()),
-                PrisonerAction::valueOf
-        );
+                PrisonerAction::valueOf);
     }
 
     @BeforeEach
@@ -63,5 +62,28 @@ class TournamentRegistryTest {
         t.setStatus(TournamentStatus.COMPLETED);
         registry.add(t);
         assertThat(registry.listRegistering()).doesNotContain(t);
+    }
+
+    @Test
+    void listActive_includesRegistering() {
+        NetworkedTournament t = makeTournament("t4");
+        registry.add(t);
+        assertThat(registry.listActive()).contains(t);
+    }
+
+    @Test
+    void listActive_includesRunning() {
+        NetworkedTournament t = makeTournament("t5");
+        t.setStatus(TournamentStatus.RUNNING);
+        registry.add(t);
+        assertThat(registry.listActive()).contains(t);
+    }
+
+    @Test
+    void listActive_excludesCompleted() {
+        NetworkedTournament t = makeTournament("t6");
+        t.setStatus(TournamentStatus.COMPLETED);
+        registry.add(t);
+        assertThat(registry.listActive()).doesNotContain(t);
     }
 }

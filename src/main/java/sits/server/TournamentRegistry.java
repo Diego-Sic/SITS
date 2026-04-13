@@ -25,4 +25,11 @@ public class TournamentRegistry {
                 .filter(t -> t.getStatus() == TournamentStatus.REGISTERING)
                 .collect(Collectors.toList());
     }
+
+    public List<NetworkedTournament> listActive() {
+        return tournaments.values().stream()
+                .filter(t -> t.getStatus() == TournamentStatus.REGISTERING
+                        || t.getStatus() == TournamentStatus.RUNNING)
+                .collect(Collectors.toList());
+    }
 }
