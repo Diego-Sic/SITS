@@ -7,4 +7,9 @@ public class TournamentInfo {
     public String status;   // "REGISTERING" or "RUNNING"
 
     public TournamentInfo() {}
+
+    @Override
+    public String toString() {
+        return name + " [" + status + "]";
+    }
 }

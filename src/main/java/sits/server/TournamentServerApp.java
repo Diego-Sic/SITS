@@ -28,17 +28,20 @@ public class TournamentServerApp {
         return Executors.newCachedThreadPool();
     }
 
-    // Seeds one IPD tournament with a 1-second move delay so a viewer
-    // can follow the action at a readable pace.
-    // This is for demo purposes
+    // Seeds one IPD tournament and immediately starts it in the background
+    // so a viewer can connect and watch straight away.
     @Bean
-    public CommandLineRunner seedTournaments(TournamentRegistry registry) {
-        return args -> registry.add(new NetworkedTournament(
-                "ipd-01", "IPD Tournament",
-                new RoundRobin(),
-                new IteratedPrisonersDilemma(10),
-                List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat()),
-                PrisonerAction::valueOf,
-                1000L));
+    public CommandLineRunner seedTournaments(TournamentRegistry registry, ExecutorService executor) {
+        return args -> {
+            NetworkedTournament demo = new NetworkedTournament(
+                    "ipd-01", "IPD Tournament",
+                    new RoundRobin(),
+                    new IteratedPrisonersDilemma(10),
+                    List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat()),
+                    PrisonerAction::valueOf,
+                    1000L);
+            registry.add(demo);
+            executor.submit(demo::start);
+        };
     }
 }

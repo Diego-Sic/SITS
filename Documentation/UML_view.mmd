@@ -1,0 +1,69 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+direction TB
+    class ViewerApp {
+        +main(String[]) void
+        +start(Stage) void
+    }
+
+    class ConnectController {
+        +connect() void
+    }
+
+    class LobbyController {
+        -ServerConnection connection
+        +refresh() void
+        +watchSelected() void
+    }
+
+    class LiveGameController {
+        -ServerConnection connection
+        -CompletableFuture~Void~ stream
+        +initialize() void
+        +back() void
+    }
+
+    class ServerConnection {
+        -HttpClient client
+        -String baseUrl
+        +ServerConnection(String baseUrl)
+        +fetchTournaments() List~TournamentInfo~
+        +streamMoves(String, Consumer, Runnable) CompletableFuture~Void~
+    }
+
+    class TournamentInfo {
+        +String id
+        +String name
+        +String status
+    }
+
+    class MoveEventDTO {
+        +String type
+        +int roundNumber
+        +String p1Name
+        +String p2Name
+        +String action1
+        +String action2
+        +int payoff1
+        +int payoff2
+        +String winner
+        +int totalScore1
+        +int totalScore2
+    }
+
+    %% has-a (aggregation)
+    LobbyController o-- ServerConnection : has
+    LiveGameController o-- ServerConnection : has
+
+    %% navigation flow
+    ViewerApp ..> ConnectController : loads
+    ConnectController ..> LobbyController : navigates to
+    LobbyController ..> LiveGameController : navigates to
+
+    %% depends-on
+    ConnectController ..> ServerConnection : creates
+    ServerConnection ..> TournamentInfo : deserializes
+    ServerConnection ..> MoveEventDTO : deserializes

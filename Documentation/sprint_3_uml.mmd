@@ -60,7 +60,6 @@ direction TB
         -String name
         -TournamentStatus status
         -Game game
-        -long delayMs
         -ViewerBroadcaster broadcaster
         +getId() String
         +getName() String
@@ -155,29 +154,29 @@ direction TB
     <<enumeration>> TournamentStatus
     <<Proxy>> RemoteParticipant
 
-    Game "1" o-- "0..*" GameObserver : observers
-    Game ..> MoveEvent : notifies with
-    Game ..> GameResult : notifies with
-    Game ..> TournamentResult : notifies with
+    %% is-a
     ViewerBroadcaster ..|> GameObserver
-    ViewerBroadcaster ..> MoveEventDTO : serializes to
-    ViewerBroadcaster ..> MoveEvent : receives
-    ViewerBroadcaster ..> GameResult : receives
-    ViewerBroadcaster ..> TournamentResult : receives
-    NetworkedTournament --> TournamentStatus
-    NetworkedTournament *-- ViewerBroadcaster : owns (1-to-1)
-    NetworkedTournament --> Game : owns
-    TournamentRegistry *-- NetworkedTournament : stores
-    TournamentServerController --> TournamentRegistry : uses
+
+    %% has-a (composition: child cannot exist without owner)
+    Game "1" *-- "0..*" GameObserver : has
+    NetworkedTournament *-- ViewerBroadcaster : has
+    NetworkedTournament *-- Game : has
+    TournamentRegistry *-- NetworkedTournament : has
+    TournamentServerController *-- TournamentRegistry : has
+
+    %% has-a (aggregation: owner references but does not fully own)
+    NetworkedTournament o-- RemoteParticipant : has
+    LobbyController o-- ServerConnection : has
+    LiveGameController o-- ServerConnection : has
+
+    %% uses / depends-on
+    NetworkedTournament ..> TournamentStatus
     TournamentServerController ..> ViewerBroadcaster : addEmitter()
-    NetworkedTournament --> RemoteParticipant : contains
-    ViewerApp --> ConnectController : loads
-    ConnectController --> LobbyController : navigates to
-    LobbyController --> LiveGameController : navigates to (RUNNING only)
+    ViewerApp ..> ConnectController : loads
+    ConnectController ..> LobbyController : navigates to
+    LobbyController ..> LiveGameController : navigates to
     ConnectController ..> ServerConnection : creates
-    LobbyController --> ServerConnection : uses
-    LiveGameController --> ServerConnection : uses
     ServerConnection ..> TournamentInfo : deserializes
     ServerConnection ..> MoveEventDTO : deserializes
 
-    classDef newClass :,fill:#c8e6c9,stroke:#2e7d32,color:#1b1b1b
+    classDef newClass fill:#c8e6c9,stroke:#2e7d32,color:#1b1b1b

@@ -1,54 +1,53 @@
 sequenceDiagram
     actor User
-    participant VA as ViewerApp
     participant CC as ConnectController
+    participant LC as LobbyController
+    participant LGC as LiveGameController
     participant SC as ServerConnection
     participant TSC as TournamentServerController
     participant VB as ViewerBroadcaster
 
-    Note over VA,VB: Tournament is already running in background (POST /start returned 202)
+    Note over CC,VB: Tournament is already running in background (POST /start returned 202)
 
-    VA->>CC: load connect.fxml
     User->>CC: enter IP + port → click Connect
     CC->>SC: new ServerConnection(baseUrl)
-    CC->>SC: fetchTournaments()
+    CC->>LC: navigate to LobbyController
+
+    LC->>SC: fetchTournaments()
     SC->>TSC: GET /tournaments
     TSC-->>SC: [{id, name, status: "RUNNING"}]
-    SC-->>CC: List~TournamentInfo~
-    CC->>CC: navigate to LobbyController
+    SC-->>LC: List~TournamentInfo~
+    LC->>LC: populate tournament list
 
-    User->>CC: select RUNNING tournament → click Watch
-    CC->>CC: navigate to LiveGameController
+    User->>LC: select RUNNING tournament → click Watch
+    LC->>LGC: navigate to LiveGameController
 
-    CC->>SC: streamMoves(tournamentId, onEvent, onDone)
+    LGC->>SC: streamMoves(tournamentId, onEvent, onDone)
     SC->>TSC: GET /tournaments/{id}/stream
     TSC->>VB: addEmitter(emitter)
-    SC-->>CC: CompletableFuture~Void~
+    SC-->>LGC: CompletableFuture~Void~
 
     Note over TSC,VB: Game round executes on background thread
 
-    VB->>VB: onMoveMade(event)
-    VB->>VB: serialize → MoveEventDTO JSON
+    VB->>VB: onMoveMade(event) → serialize to MoveEventDTO JSON
     VB->>TSC: emitter.send(json)
     TSC-->>SC: data: {"type":"MOVE",...}
     SC->>SC: parse SSE line → MoveEventDTO
-    SC->>CC: Platform.runLater(onEvent)
-    CC->>CC: append move to text area
+    SC->>LGC: Platform.runLater(onEvent)
+    LGC->>LGC: append move to text area
 
-    Note over CC,VB: Repeat for each round...
+    Note over TSC,VB: Repeat for each round...
 
     VB->>VB: onTournamentOver(result)
-    VB->>TSC: emitter.send(TOURNAMENT_OVER)
-    VB->>TSC: emitter.complete()
+    VB->>TSC: emitter.send(TOURNAMENT_OVER) + emitter.complete()
     TSC-->>SC: data: {"type":"TOURNAMENT_OVER"}
-    SC->>CC: Platform.runLater(onDone)
-    CC->>CC: show final standings
+    SC->>LGC: Platform.runLater(onDone)
+    LGC->>LGC: show final standings
 
     alt User clicks Back before tournament ends
-        User->>CC: click Back
-        CC->>SC: future.cancel()
+        User->>LGC: click Back
+        LGC->>SC: future.cancel()
         SC->>TSC: HTTP connection closes
-        TSC->>VB: emitter.onCompletion fires
-        VB->>VB: remove dead emitter from list
-        CC->>CC: navigate back to LobbyController
+        TSC->>VB: emitter.onCompletion fires → remove from list
+        LGC->>LC: navigate back to LobbyController
     end

@@ -1,0 +1,56 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+direction TB
+    class GameObserver {
+        +onMoveMade(MoveEvent) void
+        +onGameOver(GameResult) void
+        +onTournamentOver(TournamentResult) void
+    }
+
+    class Game {
+        -List~GameObserver~ observers
+        +addObserver(GameObserver) void
+        +removeObserver(GameObserver) void
+        +play(Participant, Participant) GameResult
+        #notifyMoveMade(MoveEvent) void
+        #notifyGameOver(GameResult) void
+    }
+
+    class NetworkedTournament {
+        -Game game
+        -ViewerBroadcaster broadcaster
+        +start() TournamentResult
+        +getBroadcaster() ViewerBroadcaster
+    }
+
+    class TournamentServerController {
+        -TournamentRegistry registry
+        +streamMoves(id) SseEmitter
+    }
+
+    class ViewerBroadcaster:::newClass {
+        -List~SseEmitter~ emitters
+        +addEmitter(SseEmitter) void
+        +onMoveMade(MoveEvent) void
+        +onGameOver(GameResult) void
+        +onTournamentOver(TournamentResult) void
+    }
+
+    <<interface>> GameObserver
+    <<abstract>> Game
+
+    %% is-a
+    ViewerBroadcaster ..|> GameObserver : implements
+
+    %% has-a
+    Game "1" *-- "0..*" GameObserver : notifies
+    NetworkedTournament *-- ViewerBroadcaster : has
+    NetworkedTournament *-- Game : has
+
+    %% uses
+    TournamentServerController ..> ViewerBroadcaster : addEmitter()
+
+    classDef newClass fill:#c8e6c9,stroke:#2e7d32,color:#1b1b1b

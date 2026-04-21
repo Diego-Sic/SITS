@@ -89,7 +89,7 @@
 						<!--    Usage: mvn clean javafx:run    -->
 						<id>default-cli</id>
 						<configuration>
-							<mainClass>testingfx.testingfx.App</mainClass>
+							<mainClass>sits.viewer.ViewerApp</mainClass>
 						</configuration>
 					</execution>
 				</executions>
@@ -97,6 +97,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>sits.server.TournamentServerApp</mainClass>
+				</configuration>
 			</plugin>
 			<plugin>
 	            <groupId>org.jacoco</groupId>

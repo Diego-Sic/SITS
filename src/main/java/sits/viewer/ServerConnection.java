@@ -48,6 +48,15 @@ public class ServerConnection {
                 mapper.getTypeFactory().constructCollectionType(List.class, TournamentInfo.class));
     }
 
+    // Sends POST /tournaments/{id}/start (async on server; returns as soon as 202 is received).
+    public void startTournament(String tournamentId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/tournaments/" + tournamentId + "/start"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        client.send(request, HttpResponse.BodyHandlers.discarding());
+    }
+
     // Opens a persistent SSE connection to GET /tournaments/{id}/stream.
     // Each incoming data: line is deserialized to a MoveEventDTO and passed to
     // onEvent.

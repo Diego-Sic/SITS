@@ -29,10 +29,11 @@ class TournamentServerAppTest {
     }
 
     @Test
-    void seedTournaments_registersIpdTournament() {
+    void seedTournaments_registersAndStartsIpdTournament() {
         NetworkedTournament t = registry.get("ipd-01");
         assertThat(t).isNotNull();
         assertThat(t.getName()).isEqualTo("IPD Tournament");
-        assertThat(t.getStatus()).isEqualTo(TournamentStatus.REGISTERING);
+        // Tournament auto-starts on boot — it will be RUNNING or COMPLETED, never REGISTERING
+        assertThat(t.getStatus()).isIn(TournamentStatus.RUNNING, TournamentStatus.COMPLETED);
     }
 }

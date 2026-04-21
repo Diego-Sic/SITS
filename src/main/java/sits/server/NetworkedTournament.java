@@ -22,6 +22,7 @@ public class NetworkedTournament {
     private final Function<String, Action> actionFactory;
     private final ViewerBroadcaster broadcaster;
     private TournamentStatus status;
+    private TournamentResult lastResult;
 
     public NetworkedTournament(String id, String name, TournamentFormat format, Game game,
                                List<Participant> initialParticipants,
@@ -78,8 +79,14 @@ public class NetworkedTournament {
         status = TournamentStatus.RUNNING;
         game.addObserver(broadcaster);
         TournamentResult result = format.run(participants, game);
+        broadcaster.onTournamentOver(result);
+        lastResult = result;
         status = TournamentStatus.COMPLETED;
         return result;
+    }
+
+    public TournamentResult getResult() {
+        return lastResult;
     }
 
     public ViewerBroadcaster getBroadcaster() {
