@@ -14,9 +14,12 @@ import javafx.stage.Stage;
 
 public class LobbyController {
 
-    @FXML private ListView<TournamentInfo> tournamentList;
-    @FXML private Button watchButton;
-    @FXML private Button startButton;
+    @FXML
+    private ListView<TournamentInfo> tournamentList;
+    @FXML
+    private Button watchButton;
+    @FXML
+    private Button startButton;
     private ServerConnection connection;
 
     public void init(ServerConnection connection) {
@@ -24,12 +27,12 @@ public class LobbyController {
         watchButton.setDisable(true);
         startButton.setDisable(true);
         tournamentList.getSelectionModel().selectedItemProperty()
-            .addListener((obs, old, sel) -> {
-                boolean isRunning = sel != null && "RUNNING".equals(sel.status);
-                boolean isRegistering = sel != null && "REGISTERING".equals(sel.status);
-                watchButton.setDisable(!isRunning);
-                startButton.setDisable(!isRegistering);
-            });
+                .addListener((obs, old, sel) -> {
+                    boolean isRunning = sel != null && "RUNNING".equals(sel.status);
+                    boolean isRegistering = sel != null && "REGISTERING".equals(sel.status);
+                    watchButton.setDisable(!isRunning);
+                    startButton.setDisable(!isRegistering);
+                });
         refresh();
     }
 
@@ -50,7 +53,8 @@ public class LobbyController {
     @FXML
     public void startSelected() {
         TournamentInfo selected = tournamentList.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         try {
             connection.startTournament(selected.id);
             refresh();
@@ -66,7 +70,8 @@ public class LobbyController {
     @FXML
     public void watchSelected() {
         TournamentInfo selected = tournamentList.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/live_game.fxml"));
             Parent root = loader.load();
