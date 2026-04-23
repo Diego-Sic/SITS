@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
@@ -133,7 +135,8 @@ class LobbyControllerTest {
                 new ObjectMapper(), Runnable::run);
 
         robot.interact(() -> controller.init(conn));
-        // init's refresh = 1 send; after that, client should be untouched if startSelected no-ops
+        // init's refresh = 1 send; after that, client should be untouched if
+        // startSelected no-ops
         robot.interact(() -> controller.startSelected());
 
         verify(mockClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
@@ -194,5 +197,60 @@ class LobbyControllerTest {
         // Dismiss so the FX thread un-blocks and the next test starts clean
         robot.push(KeyCode.ENTER);
         WaitForAsyncUtils.waitForFxEvents();
+    }
+
+    // watchSelected tests (TD3-03)
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void watchSelected_nullSelection_isNoOp(FxRobot robot) throws Exception {
+        // Populate list with a RUNNING tournament but deliberately do not select it
+        String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"RUNNING\"}]";
+        HttpClient mockClient = mock(HttpClient.class);
+        HttpResponse<String> listResponse = mock(HttpResponse.class);
+        when(listResponse.body()).thenReturn(json);
+        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(listResponse);
+        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                new ObjectMapper(), Runnable::run);
+
+        robot.interact(() -> controller.init(conn));
+        robot.interact(() -> controller.watchSelected());
+
+        // Lobby scene should still be active — no transition happened
+        assertThat(robot.lookup("#tournamentList").tryQuery()).isPresent();
+        assertThat(robot.lookup("#feedArea").tryQuery()).isNotPresent();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void watchSelected_success_transitionsToLiveGame(FxRobot robot) throws Exception {
+        String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"RUNNING\"}]";
+        HttpClient mockClient = mock(HttpClient.class);
+
+        // fetchTournaments (sync)
+        HttpResponse<String> listResponse = mock(HttpResponse.class);
+        when(listResponse.body()).thenReturn(json);
+        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(listResponse);
+
+        // streamMoves (async) — empty stream so onDone fires immediately
+        HttpResponse<Stream<String>> streamResponse = mock(HttpResponse.class);
+        when(streamResponse.body()).thenReturn(Stream.of());
+        when(mockClient.sendAsync(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                .thenReturn(CompletableFuture.completedFuture(streamResponse));
+
+        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                new ObjectMapper(), Runnable::run);
+
+        robot.interact(() -> controller.init(conn));
+        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+        robot.interact(() -> list.getSelectionModel().select(0));
+
+        robot.interact(() -> controller.watchSelected());
+
+        // We change of view so live_game is now active, lobby is gone
+        assertThat(robot.lookup("#feedArea").tryQuery()).isPresent();
+        assertThat(robot.lookup("#tournamentList").tryQuery()).isNotPresent();
     }
 }
