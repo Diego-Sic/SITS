@@ -1,0 +1,71 @@
+classDiagram
+    direction LR
+
+    class ReplayController {
+        -ReplayPlayer player
+        -ServerConnection server
+        -Slider scrubBar
+        -TextArea moveLog
+        +onLoadFile()
+        +onStepForward()
+        +onStepBack()
+        +onPlay()
+        +onPause()
+        +onScrub(int)
+    }
+
+    class ReplayPlayer {
+        -List~ReplayCommand~ commands
+        -ReplayState state
+        -int nextIndex
+        +stepForward()
+        +stepBack()
+        +seekTo(int)
+        +playAsync(long, Runnable) CompletableFuture~Void~
+        +pause()
+    }
+
+    class ReplayState {
+        +int currentRound
+        +Map~String,Integer~ scores
+        +List~MoveEntry~ moveLog
+        +List~GameSummary~ completedGames
+        +Optional~TournamentSummary~ finalResult
+    }
+
+    class ReplayCommand {
+        <<interface>>
+        +apply(ReplayState)
+        +undo(ReplayState)
+    }
+
+    class ReplayFile {
+        -String tournamentId
+        -List~ReplayCommand~ commands
+    }
+
+    class ReplayStore {
+        +load(Path) ReplayFile
+        +list() List~ReplayFileMeta~
+    }
+
+    class ServerConnection {
+        <<existing>>
+        +fetchReplays() List~ReplayFileMeta~
+        +downloadReplay(String) ReplayFile
+    }
+
+    %% IS-A relationships for ReplayCommand (MoveCommand, GameEndCommand, TournamentEndCommand) are shown in Figure 1.
+
+    %% HAS-A (composition / aggregation)
+    ReplayController *-- ReplayPlayer : HAS-A
+    ReplayController o-- ServerConnection : HAS-A
+    ReplayController o-- ReplayStore : HAS-A
+    ReplayPlayer *-- ReplayState : HAS-A
+    ReplayPlayer o-- ReplayCommand : HAS-A (List)
+    ReplayFile o-- ReplayCommand : HAS-A (List)
+
+    %% USES (transient dependency)
+    ReplayCommand ..> ReplayState : uses (apply / undo)
+    ReplayStore ..> ReplayFile : uses / loads
+    ServerConnection ..> ReplayFile : uses / downloads

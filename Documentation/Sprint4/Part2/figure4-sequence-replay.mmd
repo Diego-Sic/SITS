@@ -1,0 +1,53 @@
+sequenceDiagram
+    autonumber
+
+    actor U as User
+    participant C as ReplayController
+    participant S as ReplayStore
+    participant P as ReplayPlayer
+    participant Cmd as ReplayCommand
+    participant St as ReplayState
+
+    Note over U,S: Load a replay
+    U->>C: click "Browse Replays..."
+    C->>S: list()
+    S-->>C: List~ReplayFileMeta~
+    C-->>U: render file picker
+
+    U->>C: select file
+    C->>S: load(path)
+    S-->>C: ReplayFile
+    C->>P: new ReplayPlayer(file.commands, new ReplayState())
+
+    Note over U,St: Step forward (apply)
+    U->>C: click "Step Forward"
+    C->>P: stepForward()
+    P->>Cmd: apply(state)
+    Cmd->>St: append moveLog entry; add payoffs to scores
+    P->>P: nextIndex++
+    P-->>C: void
+    C->>St: read currentRound, scores, moveLog
+    C-->>U: re-render scrub bar + panels
+
+    Note over U,St: Step back (undo)
+    U->>C: click "Step Back"
+    C->>P: stepBack()
+    P->>P: nextIndex--
+    P->>Cmd: undo(state)
+    Cmd->>St: pop moveLog entry; subtract payoffs
+    P-->>C: void
+    C->>St: read state
+    C-->>U: re-render
+
+    Note over U,St: Seek (scrub bar drag)
+    U->>C: drag scrub to target index
+    C->>P: seekTo(targetIndex)
+    loop while nextIndex != targetIndex
+        alt nextIndex < targetIndex
+            P->>Cmd: apply(state)
+        else nextIndex > targetIndex
+            P->>Cmd: undo(state)
+        end
+    end
+    P-->>C: void
+    C-->>U: re-render at target position
