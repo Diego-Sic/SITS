@@ -35,222 +35,220 @@ import javafx.stage.Stage;
 @ExtendWith(ApplicationExtension.class)
 class LobbyControllerTest {
 
-    private LobbyController controller;
+        private LobbyController controller;
 
-    @Start
-    void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/lobby.fxml"));
-        stage.setScene(new Scene(loader.load()));
-        controller = loader.getController();
-        stage.show();
-    }
+        @Start
+        void start(Stage stage) throws Exception {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/lobby.fxml"));
+                stage.setScene(new Scene(loader.load()));
+                controller = loader.getController();
+                stage.show();
+        }
 
-    @Test
-    void watchButton_isDisabledByDefault(FxRobot robot) {
-        Button watchButton = robot.lookup("#watchButton").queryAs(Button.class);
-        assertThat(watchButton.isDisabled()).isTrue();
-    }
+        @Test
+        void watchButton_isDisabledByDefault(FxRobot robot) {
+                Button watchButton = robot.lookup("#watchButton").queryAs(Button.class);
+                assertThat(watchButton.isDisabled()).isTrue();
+        }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void watchButton_enablesWhenRunningTournamentSelected(FxRobot robot) throws Exception {
-        String json = "[{\"id\":\"t1\",\"name\":\"IPD Tournament\",\"status\":\"RUNNING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> mockResponse = mock(HttpResponse.class);
-        when(mockResponse.body()).thenReturn(json);
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+        @Test
+        @SuppressWarnings("unchecked")
+        void watchButton_enablesWhenRunningTournamentSelected(FxRobot robot) throws Exception {
+                String json = "[{\"id\":\"t1\",\"name\":\"IPD Tournament\",\"status\":\"RUNNING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> mockResponse = mock(HttpResponse.class);
+                when(mockResponse.body()).thenReturn(json);
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(mockResponse);
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        robot.interact(() -> controller.init(conn));
+                robot.interact(() -> controller.init(conn));
 
-        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
-        robot.interact(() -> list.getSelectionModel().select(0));
+                ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+                robot.interact(() -> list.getSelectionModel().select(0));
 
-        Button watchButton = robot.lookup("#watchButton").queryAs(Button.class);
-        assertThat(watchButton.isDisabled()).isFalse();
-    }
+                Button watchButton = robot.lookup("#watchButton").queryAs(Button.class);
+                assertThat(watchButton.isDisabled()).isFalse();
+        }
 
-    @Test
-    void startButton_isDisabledByDefault(FxRobot robot) {
-        Button startButton = robot.lookup("#startButton").queryAs(Button.class);
-        assertThat(startButton.isDisabled()).isTrue();
-    }
+        @Test
+        void startButton_isDisabledByDefault(FxRobot robot) {
+                Button startButton = robot.lookup("#startButton").queryAs(Button.class);
+                assertThat(startButton.isDisabled()).isTrue();
+        }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void startButton_enablesWhenRegisteringTournamentSelected(FxRobot robot) throws Exception {
-        String json = "[{\"id\":\"t2\",\"name\":\"New Tournament\",\"status\":\"REGISTERING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> mockResponse = mock(HttpResponse.class);
-        when(mockResponse.body()).thenReturn(json);
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+        @Test
+        @SuppressWarnings("unchecked")
+        void startButton_enablesWhenRegisteringTournamentSelected(FxRobot robot) throws Exception {
+                String json = "[{\"id\":\"t2\",\"name\":\"New Tournament\",\"status\":\"REGISTERING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> mockResponse = mock(HttpResponse.class);
+                when(mockResponse.body()).thenReturn(json);
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(mockResponse);
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        robot.interact(() -> controller.init(conn));
+                robot.interact(() -> controller.init(conn));
 
-        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
-        robot.interact(() -> list.getSelectionModel().select(0));
+                ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+                robot.interact(() -> list.getSelectionModel().select(0));
 
-        Button startButton = robot.lookup("#startButton").queryAs(Button.class);
-        assertThat(startButton.isDisabled()).isFalse();
-    }
+                Button startButton = robot.lookup("#startButton").queryAs(Button.class);
+                assertThat(startButton.isDisabled()).isFalse();
+        }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void watchButton_staysDisabledWhenRegisteringTournamentSelected(FxRobot robot) throws Exception {
-        String json = "[{\"id\":\"t2\",\"name\":\"Test Tournament\",\"status\":\"REGISTERING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> mockResponse = mock(HttpResponse.class);
-        when(mockResponse.body()).thenReturn(json);
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+        @Test
+        @SuppressWarnings("unchecked")
+        void watchButton_staysDisabledWhenRegisteringTournamentSelected(FxRobot robot) throws Exception {
+                String json = "[{\"id\":\"t2\",\"name\":\"Test Tournament\",\"status\":\"REGISTERING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> mockResponse = mock(HttpResponse.class);
+                when(mockResponse.body()).thenReturn(json);
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(mockResponse);
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        robot.interact(() -> controller.init(conn));
+                robot.interact(() -> controller.init(conn));
 
-        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
-        robot.interact(() -> list.getSelectionModel().select(0));
+                ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+                robot.interact(() -> list.getSelectionModel().select(0));
 
-        Button watchButton = robot.lookup("#watchButton").queryAs(Button.class);
-        assertThat(watchButton.isDisabled()).isTrue();
-    }
+                Button watchButton = robot.lookup("#watchButton").queryAs(Button.class);
+                assertThat(watchButton.isDisabled()).isTrue();
+        }
 
-    // startSelected tests (TD3-02)
+        // startSelected tests
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void startSelected_nullSelection_isNoOp(FxRobot robot) throws Exception {
-        // Empty list so nothing is selectable
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> mockResponse = mock(HttpResponse.class);
-        when(mockResponse.body()).thenReturn("[]");
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(mockResponse);
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+        @Test
+        @SuppressWarnings("unchecked")
+        void startSelected_nullSelection_isNoOp(FxRobot robot) throws Exception {
+                // Empty list so nothing is selectable
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> mockResponse = mock(HttpResponse.class);
+                when(mockResponse.body()).thenReturn("[]");
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(mockResponse);
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        robot.interact(() -> controller.init(conn));
-        // init's refresh = 1 send; after that, client should be untouched if
-        // startSelected no-ops
-        robot.interact(() -> controller.startSelected());
+                robot.interact(() -> controller.init(conn));
+                // init's refresh = 1 send; after that, client should be untouched if
+                // startSelected no-ops
+                robot.interact(() -> controller.startSelected());
 
-        verify(mockClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
-    }
+                verify(mockClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+        }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void startSelected_success_callsStartAndRefreshes(FxRobot robot) throws Exception {
-        String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"REGISTERING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> listResponse = mock(HttpResponse.class);
-        when(listResponse.body()).thenReturn(json);
-        HttpResponse<Void> voidResponse = mock(HttpResponse.class);
-        // 3 sends expected: init-refresh, startTournament POST, post-start refresh.
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(listResponse)
-                .thenReturn(voidResponse)
-                .thenReturn(listResponse);
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+        @Test
+        @SuppressWarnings("unchecked")
+        void startSelected_success_callsStartAndRefreshes(FxRobot robot) throws Exception {
+                String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"REGISTERING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> listResponse = mock(HttpResponse.class);
+                when(listResponse.body()).thenReturn(json);
+                HttpResponse<Void> voidResponse = mock(HttpResponse.class);
+                // 3 sends expected: init-refresh, startTournament POST, post-start refresh.
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(listResponse)
+                                .thenReturn(voidResponse)
+                                .thenReturn(listResponse);
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        robot.interact(() -> controller.init(conn));
-        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
-        robot.interact(() -> list.getSelectionModel().select(0));
+                robot.interact(() -> controller.init(conn));
+                ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+                robot.interact(() -> list.getSelectionModel().select(0));
 
-        robot.interact(() -> controller.startSelected());
+                robot.interact(() -> controller.startSelected());
 
-        verify(mockClient, times(3)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
-    }
+                verify(mockClient, times(3)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+        }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void startSelected_exception_showsAlert(FxRobot robot) throws Exception {
-        String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"REGISTERING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> listResponse = mock(HttpResponse.class);
-        when(listResponse.body()).thenReturn(json);
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(listResponse)
-                .thenThrow(new IOException("boom"));
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+        @Test
+        @SuppressWarnings("unchecked")
+        void startSelected_exception_showsAlert(FxRobot robot) throws Exception {
+                String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"REGISTERING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> listResponse = mock(HttpResponse.class);
+                when(listResponse.body()).thenReturn(json);
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(listResponse)
+                                .thenThrow(new IOException("boom"));
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        robot.interact(() -> controller.init(conn));
-        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
-        robot.interact(() -> list.getSelectionModel().select(0));
+                robot.interact(() -> controller.init(conn));
+                ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+                robot.interact(() -> list.getSelectionModel().select(0));
 
-        // Schedule the handler on the FX thread so showAndWait can block there
-        // while the test thread waits for the alert window to appear.
-        Platform.runLater(() -> controller.startSelected());
+                // Schedule the handler on the FX thread so showAndWait can block there
+                // while the test thread waits for the alert window to appear.
+                Platform.runLater(() -> controller.startSelected());
 
-        WaitForAsyncUtils.waitFor(5, TimeUnit.SECONDS,
-                () -> robot.lookup(".dialog-pane").tryQuery().isPresent());
+                WaitForAsyncUtils.waitFor(5, TimeUnit.SECONDS,
+                                () -> robot.lookup(".dialog-pane").tryQuery().isPresent());
 
-        DialogPane pane = robot.lookup(".dialog-pane").queryAs(DialogPane.class);
-        assertThat(pane.getHeaderText()).isEqualTo("Failed to start tournament");
+                DialogPane pane = robot.lookup(".dialog-pane").queryAs(DialogPane.class);
+                assertThat(pane.getHeaderText()).isEqualTo("Failed to start tournament");
 
-        // Dismiss so the FX thread un-blocks and the next test starts clean
-        robot.push(KeyCode.ENTER);
-        WaitForAsyncUtils.waitForFxEvents();
-    }
+                // Dismiss so the FX thread un-blocks and the next test starts clean
+                robot.push(KeyCode.ENTER);
+                WaitForAsyncUtils.waitForFxEvents();
+        }
 
-    // watchSelected tests (TD3-03)
+        @Test
+        @SuppressWarnings("unchecked")
+        void watchSelected_nullSelection_isNoOp(FxRobot robot) throws Exception {
+                // Populate list with a RUNNING tournament but deliberately do not select it
+                String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"RUNNING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
+                HttpResponse<String> listResponse = mock(HttpResponse.class);
+                when(listResponse.body()).thenReturn(json);
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(listResponse);
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void watchSelected_nullSelection_isNoOp(FxRobot robot) throws Exception {
-        // Populate list with a RUNNING tournament but deliberately do not select it
-        String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"RUNNING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
-        HttpResponse<String> listResponse = mock(HttpResponse.class);
-        when(listResponse.body()).thenReturn(json);
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(listResponse);
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+                robot.interact(() -> controller.init(conn));
+                robot.interact(() -> controller.watchSelected());
 
-        robot.interact(() -> controller.init(conn));
-        robot.interact(() -> controller.watchSelected());
+                // Lobby scene should still be active — no transition happened
+                assertThat(robot.lookup("#tournamentList").tryQuery()).isPresent();
+                assertThat(robot.lookup("#feedArea").tryQuery()).isNotPresent();
+        }
 
-        // Lobby scene should still be active — no transition happened
-        assertThat(robot.lookup("#tournamentList").tryQuery()).isPresent();
-        assertThat(robot.lookup("#feedArea").tryQuery()).isNotPresent();
-    }
+        @Test
+        @SuppressWarnings("unchecked")
+        void watchSelected_success_transitionsToLiveGame(FxRobot robot) throws Exception {
+                String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"RUNNING\"}]";
+                HttpClient mockClient = mock(HttpClient.class);
 
-    @Test
-    @SuppressWarnings("unchecked")
-    void watchSelected_success_transitionsToLiveGame(FxRobot robot) throws Exception {
-        String json = "[{\"id\":\"t1\",\"name\":\"T\",\"status\":\"RUNNING\"}]";
-        HttpClient mockClient = mock(HttpClient.class);
+                // fetchTournaments (sync)
+                HttpResponse<String> listResponse = mock(HttpResponse.class);
+                when(listResponse.body()).thenReturn(json);
+                when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(listResponse);
 
-        // fetchTournaments (sync)
-        HttpResponse<String> listResponse = mock(HttpResponse.class);
-        when(listResponse.body()).thenReturn(json);
-        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(listResponse);
+                // streamMoves (async) — empty stream so onDone fires immediately
+                HttpResponse<Stream<String>> streamResponse = mock(HttpResponse.class);
+                when(streamResponse.body()).thenReturn(Stream.of());
+                when(mockClient.sendAsync(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+                                .thenReturn(CompletableFuture.completedFuture(streamResponse));
 
-        // streamMoves (async) — empty stream so onDone fires immediately
-        HttpResponse<Stream<String>> streamResponse = mock(HttpResponse.class);
-        when(streamResponse.body()).thenReturn(Stream.of());
-        when(mockClient.sendAsync(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-                .thenReturn(CompletableFuture.completedFuture(streamResponse));
+                ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
+                                new ObjectMapper(), Runnable::run);
 
-        ServerConnection conn = new ServerConnection("http://localhost:8080", mockClient,
-                new ObjectMapper(), Runnable::run);
+                robot.interact(() -> controller.init(conn));
+                ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
+                robot.interact(() -> list.getSelectionModel().select(0));
 
-        robot.interact(() -> controller.init(conn));
-        ListView<TournamentInfo> list = robot.lookup("#tournamentList").queryListView();
-        robot.interact(() -> list.getSelectionModel().select(0));
+                robot.interact(() -> controller.watchSelected());
 
-        robot.interact(() -> controller.watchSelected());
-
-        // We change of view so live_game is now active, lobby is gone
-        assertThat(robot.lookup("#feedArea").tryQuery()).isPresent();
-        assertThat(robot.lookup("#tournamentList").tryQuery()).isNotPresent();
-    }
+                // We change of view so live_game is now active, lobby is gone
+                assertThat(robot.lookup("#feedArea").tryQuery()).isPresent();
+                assertThat(robot.lookup("#tournamentList").tryQuery()).isNotPresent();
+        }
 }
