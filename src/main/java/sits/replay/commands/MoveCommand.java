@@ -27,8 +27,8 @@ public record MoveCommand(
     @Override
     public void apply(ReplayState state) {
         state.getMoveLog().add(new MoveEntry(roundNumber, nameP1, nameP2, actionP1, actionP2, payoffP1, payoffP2));
-        state.getScores().merge(nameP1, payoffP1, Integer::sum);
-        state.getScores().merge(nameP2, payoffP2, Integer::sum);
+        addScore(state, nameP1, payoffP1);
+        addScore(state, nameP2, payoffP2);
         state.setCurrentRound(roundNumber);
     }
 
@@ -41,12 +41,24 @@ public record MoveCommand(
         state.setCurrentRound(log.isEmpty() ? 0 : log.get(log.size() - 1).roundNumber());
     }
 
-    private void subtractScore(ReplayState state, String name, int payoff) {
-        // returning null from merge removes the key — restores pre-apply state when
-        // score reaches 0
-        state.getScores().merge(name, payoff, (current, toSubtract) -> {
-            int result = current - toSubtract;
-            return result == 0 ? null : result;
+    private static void addScore(ReplayState state, String name, int payoff) {
+        // if-else avoids ternary null+int unboxing trap; compute(null) keeps key absent
+        state.getScores().compute(name, (k, v) -> {
+            if (v == null) {
+                if (payoff == 0) return null; // stay absent — no spurious zero entry
+                return payoff;
+            }
+            return v + payoff;
+        });
+    }
+
+    private static void subtractScore(ReplayState state, String name, int payoff) {
+        // when key is absent (was never added by apply), stays absent
+        state.getScores().compute(name, (k, v) -> {
+            if (v == null) return null;
+            int result = v - payoff;
+            if (result == 0) return null; // remove key — restores pre-apply state
+            return result;
         });
     }
 }

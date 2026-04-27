@@ -42,7 +42,8 @@ class MoveCommandTest {
     void applyMergesPayoffsIntoScores() {
         ReplayState state = new ReplayState();
         move(1, "Alice", "Bob", "COOPERATE", "DEFECT", 0, 5).apply(state);
-        assertThat(state.getScores()).containsEntry("Alice", 0);
+        // Alice's payoff is 0 so she is not added to the scores map (Map.compute no-op on absent+0)
+        assertThat(state.getScores()).doesNotContainKey("Alice");
         assertThat(state.getScores()).containsEntry("Bob", 5);
     }
 
