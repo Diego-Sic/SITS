@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,6 +33,12 @@ public class ReplayStore {
 
     public ReplayFile load(Path file) throws IOException {
         return mapper.readValue(file.toFile(), ReplayFile.class);
+    }
+
+    public Optional<ReplayFile> loadById(String tournamentId) throws IOException {
+        Path file = directory.resolve(tournamentId + ".replay");
+        if (!Files.exists(file)) return Optional.empty();
+        return Optional.of(mapper.readValue(file.toFile(), ReplayFile.class));
     }
 
     public List<ReplayFile.Meta> list() throws IOException {
