@@ -23,6 +23,7 @@ public class ReplayStore {
     }
 
     public void save(String tournamentId, List<ReplayCommand> commands) throws IOException {
+        Files.createDirectories(directory);
         ReplayFile.Meta meta = new ReplayFile.Meta(tournamentId, Instant.now().toString(), commands.size());
         ReplayFile file = new ReplayFile(meta, commands);
         Path dest = directory.resolve(tournamentId + ".replay");
