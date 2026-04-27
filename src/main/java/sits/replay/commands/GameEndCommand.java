@@ -1,17 +1,20 @@
 package sits.replay.commands;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import sits.replay.GameSummary;
 import sits.replay.ReplayCommand;
 import sits.replay.ReplayState;
 
-import java.util.List;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record GameEndCommand(GameSummary summary) implements ReplayCommand {
 
-public class GameEndCommand implements ReplayCommand {
-
-    private final GameSummary summary;
-
-    public GameEndCommand(GameSummary summary) {
-        this.summary = summary;
+    @JsonProperty("type")
+    public String type() {
+        return "GAME_END";
     }
 
     @Override
