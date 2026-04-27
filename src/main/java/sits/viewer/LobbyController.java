@@ -64,6 +64,24 @@ public class LobbyController {
     }
 
     @FXML
+    public void openReplay() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/replay.fxml"));
+            Parent root = loader.load();
+            ReplayController replay = loader.getController();
+            replay.init(connection);
+            Stage stage = (Stage) tournamentList.getScene().getWindow();
+            stage.setScene(new Scene(root));
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to open replay screen");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
     public void watchSelected() {
         TournamentInfo selected = tournamentList.getSelectionModel().getSelectedItem();
         if (selected == null) return;

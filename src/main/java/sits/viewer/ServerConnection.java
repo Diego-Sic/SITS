@@ -10,10 +10,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import javafx.application.Platform;
 import sits.networking.dto.MoveEventDTO;
+import sits.replay.ReplayCommand;
+import sits.replay.ReplayCommandDeserializer;
+import sits.replay.ReplayFile;
 
 public class ServerConnection {
 
@@ -55,6 +60,33 @@ public class ServerConnection {
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         client.send(request, HttpResponse.BodyHandlers.discarding());
+    }
+
+    public List<ReplayFile.Meta> fetchReplays() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/replays"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return mapper.readValue(response.body(),
+                mapper.getTypeFactory().constructCollectionType(List.class, ReplayFile.Meta.class));
+    }
+
+    public ReplayFile fetchReplayFile(String id) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + "/replays/" + id))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return buildReplayMapper().readValue(response.body(), ReplayFile.class);
+    }
+
+    private static ObjectMapper buildReplayMapper() {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(ReplayCommand.class, new ReplayCommandDeserializer());
+        return new ObjectMapper()
+                .registerModule(module)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     // Opens a persistent SSE connection to GET /tournaments/{id}/stream.

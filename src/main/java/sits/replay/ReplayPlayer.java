@@ -57,7 +57,8 @@ public class ReplayPlayer {
         playing = false;
     }
 
-    public ReplayState getState()  { return state; }
-    public int getNextIndex()      { return nextIndex; }
-    public boolean isPlaying()     { return playing; }
+    public ReplayState getState()    { return state; }
+    public int getNextIndex()        { return nextIndex; }
+    public int getCommandCount()     { return commands.size(); }
+    public boolean isPlaying()       { return playing; }
 }
