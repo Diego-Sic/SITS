@@ -1,0 +1,81 @@
+classDiagram
+    direction LR
+
+    class GameObserver {
+        <<interface>>
+        +onMoveMade(MoveEvent)
+        +onGameOver(GameResult)
+        +onTournamentOver(TournamentResult)
+    }
+
+    class NetworkedTournament {
+        <<existing>>
+        -TournamentStatus status
+        +start()
+        +addParticipant(Participant)
+    }
+
+    class ReplayRecorder {
+        -String tournamentId
+        -List~ReplayCommand~ commands
+        -ReplayStore store
+        +onMoveMade(MoveEvent)
+        +onGameOver(GameResult)
+        +onTournamentOver(TournamentResult)
+    }
+
+    class ReplayCommand {
+        <<interface>>
+        +apply(ReplayState)
+        +undo(ReplayState)
+    }
+
+    class MoveCommand {
+        -int roundNumber
+        -String nameP1
+        -String nameP2
+        -String actionP1
+        -String actionP2
+        -int payoffP1
+        -int payoffP2
+    }
+
+    class GameEndCommand {
+        -String winnerName
+        -int totalScoreP1
+        -int totalScoreP2
+    }
+
+    class TournamentEndCommand {
+        -Map~String,Integer~ standings
+    }
+
+    class ReplayStore {
+        -Path replayDir
+        +save(String, List~ReplayCommand~)
+        +load(Path) ReplayFile
+        +list() List~ReplayFileMeta~
+    }
+
+    class ReplayFile {
+        -String tournamentId
+        -String tournamentName
+        -Instant createdAt
+        -List~String~ participants
+        -List~ReplayCommand~ commands
+    }
+
+    %% IS-A (inheritance / interface realization)
+    GameObserver <|.. ReplayRecorder : IS-A
+    ReplayCommand <|.. MoveCommand : IS-A
+    ReplayCommand <|.. GameEndCommand : IS-A
+    ReplayCommand <|.. TournamentEndCommand : IS-A
+
+    %% HAS-A (composition / aggregation)
+    NetworkedTournament *-- ReplayRecorder : HAS-A
+    ReplayRecorder o-- ReplayCommand : HAS-A (List)
+    ReplayRecorder o-- ReplayStore : HAS-A
+    ReplayFile o-- ReplayCommand : HAS-A (List)
+
+    %% USES (transient dependency)
+    ReplayStore ..> ReplayFile : uses / serializes

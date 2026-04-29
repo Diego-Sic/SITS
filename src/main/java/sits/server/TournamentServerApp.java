@@ -1,5 +1,6 @@
 package sits.server;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,6 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import sits.replay.ReplayStore;
 
 import sits.games.ipd.AlwaysCooperate;
 import sits.games.ipd.AlwaysDefect;
@@ -26,6 +29,11 @@ public class TournamentServerApp {
     @Bean
     public ExecutorService executorService() {
         return Executors.newCachedThreadPool();
+    }
+
+    @Bean
+    public ReplayStore replayStore() {
+        return new ReplayStore(Path.of("replays"));
     }
 
     // Seeds one IPD tournament and immediately starts it in the background

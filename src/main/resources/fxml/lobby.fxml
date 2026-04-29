@@ -16,6 +16,7 @@
         <Button text="Refresh" onAction="#refresh" />
         <Button fx:id="startButton" text="Start" onAction="#startSelected" disable="true" />
         <Button fx:id="watchButton" text="Watch" onAction="#watchSelected" disable="true" />
+        <Button text="Replay" onAction="#openReplay" />
     </HBox>
 
 </VBox>

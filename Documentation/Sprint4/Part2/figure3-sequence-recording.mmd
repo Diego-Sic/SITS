@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+
+    participant NT as NetworkedTournament
+    participant G as Game
+    participant R as ReplayRecorder
+    participant L as commands: List~ReplayCommand~
+    participant S as ReplayStore
+    participant FS as FileSystem
+
+    Note over NT,R: Setup (inside NetworkedTournament.start())
+    NT->>R: new ReplayRecorder(tournamentId, store)
+    NT->>G: addObserver(recorder)
+
+    Note over G,L: Per-round event flow
+    loop each round of each game
+        G->>R: onMoveMade(MoveEvent)
+        R->>R: new MoveCommand(round, names, labels, payoffs)
+        R->>L: append(moveCommand)
+    end
+
+    Note over G,L: End of a single game
+    G->>R: onGameOver(GameResult)
+    R->>R: new GameEndCommand(winner, totals)
+    R->>L: append(gameEndCommand)
+
+    Note over G,FS: End of tournament — flush
+    G->>R: onTournamentOver(TournamentResult)
+    R->>R: new TournamentEndCommand(standings)
+    R->>L: append(tournamentEndCommand)
+    R->>S: save(tournamentId, commands)
+    S->>FS: write {tournamentId}-{timestamp}.replay
+    FS-->>S: ok
+    S-->>R: void

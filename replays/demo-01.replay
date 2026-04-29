@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "tournamentId": "demo-01",
+    "savedAt": "2026-04-27T12:00:00",
+    "commandCount": 8
+  },
+  "commands": [
+    {"type":"MOVE","roundNumber":1,"nameP1":"TitForTat","nameP2":"AlwaysDefect","actionP1":"COOPERATE","actionP2":"DEFECT","payoffP1":0,"payoffP2":5},
+    {"type":"MOVE","roundNumber":2,"nameP1":"TitForTat","nameP2":"AlwaysDefect","actionP1":"DEFECT","actionP2":"DEFECT","payoffP1":1,"payoffP2":1},
+    {"type":"MOVE","roundNumber":3,"nameP1":"TitForTat","nameP2":"AlwaysDefect","actionP1":"DEFECT","actionP2":"DEFECT","payoffP1":1,"payoffP2":1},
+    {"type":"MOVE","roundNumber":4,"nameP1":"TitForTat","nameP2":"AlwaysDefect","actionP1":"DEFECT","actionP2":"DEFECT","payoffP1":1,"payoffP2":1},
+    {"type":"MOVE","roundNumber":5,"nameP1":"TitForTat","nameP2":"AlwaysDefect","actionP1":"DEFECT","actionP2":"DEFECT","payoffP1":1,"payoffP2":1},
+    {"type":"GAME_END","summary":{"winner":"AlwaysDefect","nameP1":"TitForTat","nameP2":"AlwaysDefect","scoreP1":4,"scoreP2":9}},
+    {"type":"TOURNAMENT_END","summary":{"finalScores":{"TitForTat":4,"AlwaysDefect":9}}}
+  ]
+}
