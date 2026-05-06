@@ -26,9 +26,13 @@ make server       # launches TournamentServerApp on :8080 and auto-seeds tournam
 ## Machine B — clients (two terminals)
 
 ```bash
-make client1 SERVER=<A_ip>   # registers the first participant (default strategy: TitForTat) with the server on Machine A
-make client2 SERVER=<A_ip>   # registers the second participant (default strategy: AlwaysDefect) — run in a separate terminal so logs stay readable
+make client1 SERVER=<A_ip> PARTICIPANT_HOST=<B_ip>   # registers the first participant (default strategy: TitForTat) with the server on Machine A
+make client2 SERVER=<A_ip> PARTICIPANT_HOST=<B_ip>   # registers the second participant (default strategy: AlwaysDefect) — run in a separate terminal so logs stay readable
 ```
+
+> **Why `PARTICIPANT_HOST`?** On Linux `InetAddress.getLocalHost()` resolves to `127.0.0.1`,
+> so without this flag Machine A would store a loopback address for Machine B and fail to reach it during the tournament.
+> Use `make ip` on Machine B to get `<B_ip>`.
 
 ## Machine C — viewer
 

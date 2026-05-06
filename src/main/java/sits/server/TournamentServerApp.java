@@ -12,11 +12,8 @@ import org.springframework.context.annotation.Bean;
 
 import sits.replay.ReplayStore;
 
-import sits.games.ipd.AlwaysCooperate;
-import sits.games.ipd.AlwaysDefect;
 import sits.games.ipd.IteratedPrisonersDilemma;
 import sits.games.ipd.PrisonerAction;
-import sits.games.ipd.TitForTat;
 import sits.tournament.RoundRobin;
 
 @SpringBootApplication
@@ -36,20 +33,19 @@ public class TournamentServerApp {
         return new ReplayStore(Path.of("replays"));
     }
 
-    // Seeds one IPD tournament and immediately starts it in the background
-    // so a viewer can connect and watch straight away.
+    // Seeds one IPD tournament in REGISTERING state so network clients can join before it starts.
+    // Start it via POST /tournaments/ipd-01/start or the viewer GUI "Start Tournament" button.
     @Bean
-    public CommandLineRunner seedTournaments(TournamentRegistry registry, ExecutorService executor) {
+    public CommandLineRunner seedTournaments(TournamentRegistry registry) {
         return args -> {
             NetworkedTournament demo = new NetworkedTournament(
                     "ipd-01", "IPD Tournament",
                     new RoundRobin(),
                     new IteratedPrisonersDilemma(10),
-                    List.of(new AlwaysCooperate(), new AlwaysDefect(), new TitForTat()),
+                    List.of(),
                     PrisonerAction::valueOf,
                     1000L);
             registry.add(demo);
-            executor.submit(demo::start);
         };
     }
 }

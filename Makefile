@@ -34,7 +34,8 @@ kill-port:
 
 server:
 	$(MVN) spring-boot:run \
-	  -Dspring-boot.run.mainClass=sits.server.TournamentServerApp
+	  -Dspring-boot.run.mainClass=sits.server.TournamentServerApp \
+	  -Dspring-boot.run.arguments=--server.port=$(PORT)
 
 # spring-boot expects a comma-separated arg list; building it in shell lets us conditionally append --participant.host
 # I am still studying this and why it works, but it seems to be a common pattern for passing complex args to make targets
