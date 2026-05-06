@@ -40,7 +40,9 @@ make client2 SERVER=<A_ip> PARTICIPANT_HOST=<B_ip>   # registers the second part
 make viewer    # launches the JavaFX ViewerApp (mvn javafx:run); the GUI opens on this machine's display
 ```
 
-In the GUI: **IP** = Machine A's LAN IP (not `localhost`), **Port** = `8080` → Connect → select `ipd-01` → **Start Tournament**.
+In the GUI: **IP** = Machine A's LAN IP (not `localhost`), **Port** = `8080` → Connect → select `ipd-01`.
+
+> **Wait** until both client terminals on Machine B print something like `Started ClientApp` before clicking **Start Tournament**. Maven takes ~30 s to compile and boot each client — if you click Start before they finish registering the tournament runs with 0 participants and nothing is shown. Once you click Start the viewer navigates automatically to the live feed.
 
 ## Quick sanity check
 

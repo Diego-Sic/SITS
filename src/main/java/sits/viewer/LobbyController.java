@@ -57,7 +57,13 @@ public class LobbyController {
             return;
         try {
             connection.startTournament(selected.id);
-            refresh();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/live_game.fxml"));
+            Parent root = loader.load();
+            LiveGameController liveGame = loader.getController();
+            liveGame.init(connection, selected.id);
+            liveGame.startStream();
+            Stage stage = (Stage) tournamentList.getScene().getWindow();
+            stage.setScene(new Scene(root));
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
