@@ -33,20 +33,16 @@ kill-port:
 	-lsof -ti:$(PORT) | xargs -r kill -9   # leading dash: don't fail the target if no process holds the port
 
 server:
-	$(MVN) spring-boot:run \
-	  -Dspring-boot.run.mainClass=sits.server.TournamentServerApp \
-	  -Dspring-boot.run.arguments=--server.port=$(PORT)
+	export SERVER_PORT=$(PORT); \
+	$(MVN) spring-boot:run
 
-# spring-boot expects a comma-separated arg list; building it in shell lets us conditionally append --participant.host
-# I am still studying this and why it works, but it seems to be a common pattern for passing complex args to make targets
 define run_client
-	args="--tournament.server.url=$(SERVER_URL),--tournament.id=$(TOURNAMENT),--server.port=0,--participant.name=$(1)"; \
-	if [ -n "$(PARTICIPANT_HOST)" ]; then \
-	  args="$$args,--participant.host=$(PARTICIPANT_HOST)"; \
-	fi; \
-	$(MVN) spring-boot:run \
-	  -Dspring-boot.run.mainClass=sits.client.ClientApp \
-	  -Dspring-boot.run.arguments="$$args"
+	export TOURNAMENT_SERVER_URL=$(SERVER_URL); \
+	export TOURNAMENT_ID=$(TOURNAMENT); \
+	export SERVER_PORT=0; \
+	export PARTICIPANT_NAME=$(1); \
+	if [ -n "$(PARTICIPANT_HOST)" ]; then export PARTICIPANT_HOST=$(PARTICIPANT_HOST); fi; \
+	$(MVN) spring-boot:run -Pclient
 endef
 
 client1:
